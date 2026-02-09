@@ -560,9 +560,10 @@
     z-index: 2000;
     opacity: 0;
     pointer-events: none;
+    transition: opacity 0.3s;
   }
   
-  .mobile-search-overlay.active {
+  .listings-wrapper .mobile-search-overlay.active {
     opacity: 1;
     pointer-events: auto;
   }
@@ -581,7 +582,7 @@
     transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
   }
   
-  .mobile-search-overlay.active .listings-wrapper .mobile-search-panel {
+  .listings-wrapper .mobile-search-overlay.active .mobile-search-panel {
     transform: translateY(0);
   }
   
@@ -602,7 +603,7 @@
     font-weight: 600;
   }
   
-  .mobile-search-close {
+  .listings-wrapper .mobile-search-close {
     background: none;
     border: none;
     font-size: 28px;
