@@ -1238,26 +1238,25 @@
       console.log('🎛️ Phase 6: Setting up filters...');
       
       const filterBtn = document.getElementById('filter-btn');
-      if (!filterBtn) {
-        console.error('❌ Filter button not found!');
-        return;
-      }
       
-      // Create and append dropdown
+      // Always create dropdown (even on mobile where button doesn't exist)
       const filterDropdown = createFilterDropdown();
       
-      filterBtn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        console.log('🎛️ Filter button clicked');
-        toggleFilterDropdown();
-      });
-      
-      document.addEventListener('click', function(e) {
-        const dropdown = document.getElementById('filter-dropdown');
-        if (dropdown && !dropdown.contains(e.target) && !filterBtn.contains(e.target)) {
-          hideFilterDropdown();
-        }
-      });
+      // Only setup button click if button exists (desktop only)
+      if (filterBtn) {
+        filterBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          console.log('🎛️ Filter button clicked');
+          toggleFilterDropdown();
+        });
+        
+        document.addEventListener('click', function(e) {
+          const dropdown = document.getElementById('filter-dropdown');
+          if (dropdown && !dropdown.contains(e.target) && !filterBtn.contains(e.target)) {
+            hideFilterDropdown();
+          }
+        });
+      }
       
       console.log('✅ Filters ready');
     }
@@ -1366,10 +1365,16 @@
       `;
       
       // Find the filter button's parent container and append dropdown there
+      // On mobile, button doesn't exist, so append to body (hidden)
       const filterBtn = document.getElementById('filter-btn');
-      const filterContainer = filterBtn.parentElement;
-      filterContainer.style.position = 'relative';
-      filterContainer.appendChild(dropdown);
+      if (filterBtn) {
+        const filterContainer = filterBtn.parentElement;
+        filterContainer.style.position = 'relative';
+        filterContainer.appendChild(dropdown);
+      } else {
+        // Mobile: append to body (will be cloned to mobile overlay later)
+        document.body.appendChild(dropdown);
+      }
       
       // Setup filter interactions
       setupPriceSliders();
