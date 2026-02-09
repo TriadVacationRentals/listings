@@ -782,13 +782,21 @@
     border-top: 1px solid #e5e7eb;
   }
   
-  .listings-wrapper #mobile-filters-container .filter-dropdown {
-    position: static;
-    width: 100%;
-    box-shadow: none;
-    padding: 0;
-    border-radius: 0;
-    display: block !important; /* Force display */
+  /* Override desktop filter dropdown styles when cloned to mobile */
+  .listings-wrapper #mobile-filters-container #filter-dropdown,
+  .listings-wrapper #mobile-filters-container #mobile-filter-dropdown {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    width: 100% !important;
+    max-height: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    display: block !important;
+    padding: 0 !important;
+    z-index: auto !important;
   }
   
   /* Make sure all filter sections are visible */
