@@ -17,13 +17,13 @@
     /* ============================================ */
     /* RESET & VARIABLES */
     /* ============================================ */
-    
-    /* Namespace all styles under .triad-listings to avoid Webflow conflicts */
-    .triad-listings * {
+    * {
+      margin: 0;
+      padding: 0;
       box-sizing: border-box;
     }
 
-    .triad-listings {
+    :root {
       --primary: #16A8EE;
       --text: #0F2C3A;
       --text-muted: #8b98a5;
@@ -32,8 +32,7 @@
       --bg-card: #f5f5f5;
     }
 
-    .triad-listings,
-    .triad-listings body {
+    body {
       font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       color: var(--text);
       background: var(--bg-card);
@@ -44,7 +43,7 @@
     /* ============================================ */
     /* MAIN LAYOUT */
     /* ============================================ */
-    .triad-listings .listings-container {
+    .listings-container {
       display: flex;
       flex-direction: column;
       height: 100vh;
@@ -971,183 +970,182 @@
   </style>
 </head>
 <body>
-<!-- LISTINGS PAGE STRUCTURE -->
-<!-- This goes in Webflow as an Embed element or custom code section -->
-
-
-<div class="listings-container">
   
-  <!-- SEARCH BAR (Desktop) -->
-  <div class="search-section">
-    <div class="search-container">
-      <div class="search-bar">
-        
+  <div class="listings-container">
+    
+    <!-- SEARCH BAR (Desktop) -->
+    <div class="search-section">
+      <div class="search-container">
+        <div class="search-bar">
+          
+          <!-- Location -->
+          <div class="search-field" id="location-field">
+            <div class="search-field-inner">
+              <div class="search-field-content">
+                <label class="search-label">Location</label>
+                <input type="text" class="search-input" id="location-input" placeholder="Where are you going?" autocomplete="off">
+              </div>
+            </div>
+          </div>
+          
+          <!-- Check-In -->
+          <div class="search-field" id="checkin-field">
+            <div class="search-field-inner">
+              <div class="search-field-content">
+                <label class="search-label">Check-In</label>
+                <input type="text" class="search-input" id="checkin-display" placeholder="Add date" readonly value="Add date">
+              </div>
+            </div>
+          </div>
+          
+          <!-- Check-Out -->
+          <div class="search-field" id="checkout-field">
+            <div class="search-field-inner">
+              <div class="search-field-content">
+                <label class="search-label">Check-Out</label>
+                <input type="text" class="search-input" id="checkout-display" placeholder="Add date" readonly value="Add date">
+              </div>
+            </div>
+          </div>
+          
+          <!-- Guests -->
+          <div class="search-field" id="guests-field">
+            <div class="search-field-inner">
+              <div class="search-field-content">
+                <label class="search-label">Guests</label>
+                <input type="text" class="search-input" id="guests-display" value="1 guest" readonly>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Search Button -->
+          <button class="search-btn" id="search-btn">Search</button>
+          
+          <!-- Filter Button -->
+          <button class="filter-btn" id="filter-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="4" y1="6" x2="20" y2="6"></line>
+              <line x1="4" y1="12" x2="20" y2="12"></line>
+              <line x1="4" y1="18" x2="20" y2="18"></line>
+              <circle cx="8" cy="6" r="2"></circle>
+              <circle cx="16" cy="12" r="2"></circle>
+              <circle cx="12" cy="18" r="2"></circle>
+            </svg>
+          </button>
+          
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTENT WRAPPER -->
+    <div class="content-wrapper">
+      
+      <!-- Mobile floating buttons (only on mobile) - outside sections so always visible -->
+      <div class="mobile-floating-buttons">
+        <button class="mobile-search-trigger" id="mobile-search-trigger">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+          <span>Where to?</span>
+        </button>
+      </div>
+      
+      <!-- Map View toggle bar (only on mobile) - outside sections so always visible -->
+      <div class="view-toggle-bar" id="view-toggle-bar">
+        <span class="view-toggle-text">Map View</span>
+        <label class="view-toggle-switch">
+          <input type="checkbox" id="view-toggle-checkbox" checked>
+          <span class="view-toggle-slider"></span>
+        </label>
+      </div>
+      
+      <!-- CARDS SECTION (Desktop: left side, Mobile: hidden by default) -->
+      <div class="cards-section" id="cards-section">
+        <div class="cards-grid" id="cards-container">
+          <!-- Loading state -->
+          <div class="loading-spinner" id="loading-state">
+            <div class="spinner"></div>
+            <div>Loading properties...</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- MAP SECTION -->
+      <div class="map-section" id="map-section">
+        <!-- Map (hidden when list view active on mobile) -->
+        <div id="listings-map"></div>
+      </div>
+
+    </div>
+
+  </div>
+  
+  <!-- Mobile Search/Filter Overlay -->
+  <div class="mobile-search-overlay" id="mobile-search-overlay">
+    <div class="mobile-search-panel">
+      <div class="mobile-search-header">
+        <div class="mobile-search-title">Search & Filters</div>
+        <button class="mobile-search-close" id="mobile-overlay-close">×</button>
+      </div>
+      
+      <div class="mobile-search-content">
         <!-- Location -->
-        <div class="search-field" id="location-field">
-          <label class="search-label">Where</label>
-          <input type="text" class="search-input" id="location-input" placeholder="Search destinations">
-          <div class="search-dropdown" id="location-dropdown"></div>
+        <div class="mobile-search-field-group">
+          <label class="mobile-search-label">Location</label>
+          <input type="text" class="mobile-search-input" id="mobile-location-input" placeholder="Where are you going?">
         </div>
         
-        <!-- Check-in -->
-        <div class="search-field" id="checkin-field">
-          <label class="search-label">Check in</label>
-          <input type="text" class="search-input" id="checkin-input" placeholder="Add dates" readonly>
+        <!-- Dates -->
+        <div class="mobile-search-field-group">
+          <label class="mobile-search-label">Check-in</label>
+          <input type="text" class="mobile-search-input" id="mobile-checkin-input" placeholder="Add date" readonly>
         </div>
         
-        <!-- Check-out -->
-        <div class="search-field" id="checkout-field">
-          <label class="search-label">Check out</label>
-          <input type="text" class="search-input" id="checkout-input" placeholder="Add dates" readonly>
+        <div class="mobile-search-field-group">
+          <label class="mobile-search-label">Check-out</label>
+          <input type="text" class="mobile-search-input" id="mobile-checkout-input" placeholder="Add date" readonly>
         </div>
+        
+        <!-- Calendar (hidden by default, shown when clicking dates) -->
+        <div class="calendar-wrapper-mobile" id="mobile-calendar-wrapper"></div>
         
         <!-- Guests -->
-        <div class="search-field" id="guests-field">
-          <label class="search-label">Who</label>
-          <input type="text" class="search-input" id="guests-input" value="1 guest" readonly>
-          <div class="guest-popup" id="guest-popup">
-            <div class="guest-control">
-              <span class="guest-label">Guests</span>
-              <div class="guest-buttons">
-                <button class="guest-btn" id="guest-minus">−</button>
-                <span class="guest-number" id="guest-count">1</span>
-                <button class="guest-btn" id="guest-plus">+</button>
-              </div>
+        <div class="mobile-search-field-group">
+          <label class="mobile-search-label">Guests</label>
+          <input type="text" class="mobile-search-input" id="mobile-guests-input" placeholder="1 guest" readonly>
+        </div>
+        
+        <!-- Guest popup (hidden by default, shown when clicking guests) -->
+        <div class="guest-popup-mobile" id="mobile-guest-popup">
+          <div class="guest-row">
+            <div class="guest-info">
+              <div class="guest-title">Guests</div>
+              <div class="guest-desc">Select number of guests</div>
+            </div>
+            <div class="guest-controls">
+              <button class="guest-btn" id="mobile-guest-minus">−</button>
+              <span class="guest-number" id="mobile-guest-number">1</span>
+              <button class="guest-btn" id="mobile-guest-plus">+</button>
             </div>
           </div>
         </div>
         
-        <!-- Filter Button -->
-        <button class="filter-btn" id="filter-btn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="4" y1="6" x2="20" y2="6"></line>
-            <line x1="4" y1="12" x2="20" y2="12"></line>
-            <line x1="4" y1="18" x2="20" y2="18"></line>
-            <circle cx="8" cy="6" r="2"></circle>
-            <circle cx="16" cy="12" r="2"></circle>
-            <circle cx="12" cy="18" r="2"></circle>
-          </svg>
-        </button>
+        <!-- Filters will be injected here -->
+        <div id="mobile-filters-container"></div>
         
-        <!-- Search Button -->
-        <button class="search-btn" id="search-btn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <circle cx="11" cy="11" r="8"></circle>
-            <path d="m21 21-4.35-4.35"></path>
-          </svg>
-        </button>
-        
-      </div>
-    </div>
-  </div>
-
-  <!-- CONTENT WRAPPER -->
-  <div class="content-wrapper">
-    
-    <!-- Mobile floating buttons (only on mobile) - outside sections so always visible -->
-    <div class="mobile-floating-buttons">
-      <button class="mobile-search-trigger" id="mobile-search-trigger">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="11" cy="11" r="8"></circle>
-          <path d="m21 21-4.35-4.35"></path>
-        </svg>
-        <span>Where to?</span>
-      </button>
-    </div>
-    
-    <!-- Map View toggle bar (only on mobile) - outside sections so always visible -->
-    <div class="view-toggle-bar" id="view-toggle-bar">
-      <span class="view-toggle-text">Map View</span>
-      <label class="view-toggle-switch">
-        <input type="checkbox" id="view-toggle-checkbox" checked>
-        <span class="view-toggle-slider"></span>
-      </label>
-    </div>
-    
-    <!-- CARDS SECTION (Desktop: left side, Mobile: hidden by default) -->
-    <div class="cards-section" id="cards-section">
-      <div class="cards-grid" id="cards-container">
-        <!-- Loading state -->
-        <div class="loading-spinner" id="loading-state">
-          <div class="spinner"></div>
-          <div>Loading properties...</div>
+        <!-- Buttons - offset filter padding for consistent spacing -->
+        <div style="margin-top: -12px; display: flex; gap: 12px;">
+          <button class="mobile-search-clear" id="mobile-clear-all">Clear all</button>
+          <button class="mobile-search-apply" id="mobile-apply-search">Show properties</button>
         </div>
       </div>
     </div>
-    
-    <!-- MAP SECTION -->
-    <div class="map-section" id="map-section">
-      <!-- Map (hidden when list view active on mobile) -->
-      <div id="listings-map"></div>
-    </div>
-
   </div>
-
-</div>
-
-<!-- Mobile Search/Filter Overlay -->
-<div class="mobile-search-overlay" id="mobile-search-overlay">
-  <div class="mobile-search-panel">
-    <div class="mobile-search-header">
-      <h2 class="mobile-search-title">Search & Filters</h2>
-      <button class="mobile-overlay-close" id="mobile-overlay-close">✕</button>
-    </div>
-    
-    <div class="mobile-search-content">
-      <!-- Location -->
-      <div class="mobile-search-field-group">
-        <label class="mobile-search-label">Location</label>
-        <input type="text" class="mobile-search-input" id="mobile-location-input" placeholder="Where are you going?">
-      </div>
-      
-      <!-- Dates -->
-      <div class="mobile-search-field-group">
-        <label class="mobile-search-label">Check-in</label>
-        <input type="text" class="mobile-search-input" id="mobile-checkin-input" placeholder="Add date" readonly>
-      </div>
-      
-      <div class="mobile-search-field-group">
-        <label class="mobile-search-label">Check-out</label>
-        <input type="text" class="mobile-search-input" id="mobile-checkout-input" placeholder="Add date" readonly>
-      </div>
-      
-      <!-- Calendar (hidden by default, shown when date input clicked) -->
-      <div class="calendar-wrapper-mobile" id="mobile-calendar-wrapper"></div>
-      
-      <!-- Guests -->
-      <div class="mobile-search-field-group">
-        <label class="mobile-search-label">Guests</label>
-        <input type="text" class="mobile-search-input" id="mobile-guests-input" placeholder="1 guest" readonly>
-      </div>
-      
-      <!-- Guest picker (hidden by default, shown when guest input clicked) -->
-      <div class="guest-popup-mobile" id="mobile-guest-popup">
-        <div class="guest-control-mobile">
-          <span class="guest-label-mobile">Guests</span>
-          <div class="guest-buttons-mobile">
-            <button class="guest-btn-mobile" id="mobile-guest-minus">−</button>
-            <span class="guest-number-mobile">1</span>
-            <button class="guest-btn-mobile" id="mobile-guest-plus">+</button>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Filters Container (will be populated from desktop filters) -->
-      <div id="mobile-filters-container"></div>
-      
-      <!-- Buttons - offset filter padding for consistent spacing -->
-      <div style="margin-top: -12px; display: flex; gap: 12px;">
-        <button class="mobile-search-clear" id="mobile-clear-all">Clear all</button>
-        <button class="mobile-search-apply" id="mobile-apply-search">Show properties</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  
+
   <script>
     // ============================================
     // PHASE 2 & 3: FETCH PROPERTIES + MAP
@@ -3397,5 +3395,6 @@
       return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     }
   </script>
+
 </body>
 </html>
