@@ -1,3 +1,34 @@
+// ============================================
+    // AUTO-DETECT WEBFLOW NAVBAR HEIGHT
+    // ============================================
+    
+    (function autoAdjustForWebflow() {
+      // Detect navbar height
+      const navbar = document.querySelector('nav, header, [data-nav], .navbar, .nav');
+      if (navbar && window.innerWidth <= 768) {
+        const navHeight = navbar.offsetHeight;
+        console.log('📏 Detected navbar height:', navHeight + 'px');
+        
+        // Inject custom styles with correct navbar height
+        const style = document.createElement('style');
+        style.textContent = `
+          @media (max-width: 768px) {
+            .listings-wrapper .listings-container {
+              top: ${navHeight}px !important;
+            }
+            .listings-wrapper .mobile-floating-buttons {
+              top: calc(${navHeight}px + 16px) !important;
+            }
+            .listings-wrapper .cards-section::before {
+              top: ${navHeight}px !important;
+            }
+          }
+        `;
+        document.head.appendChild(style);
+        console.log('✅ Auto-adjusted for navbar height');
+      }
+    })();
+    
     // ============================================
     // PHASE 2 & 3: FETCH PROPERTIES + MAP
     // ============================================
