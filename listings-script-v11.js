@@ -2244,63 +2244,167 @@
         if (container.children.length === 0) {
           const clone = filterDropdown.cloneNode(true);
           clone.style.display = 'block';
+          clone.id = 'mobile-filter-dropdown';
           
-          // Remove the action buttons from clone (mobile overlay has its own)
+          // Remove the action buttons from clone
           const clonedActions = clone.querySelector('div[style*="display: flex; gap: 12px"]');
           if (clonedActions && clonedActions.querySelector('#clear-filters')) {
             clonedActions.remove();
           }
           
           container.appendChild(clone);
-          
-          // Re-setup filter interactions on the CLONED elements
-          // Get the cloned slider elements specifically
-          const clonedMinSlider = clone.querySelector('#price-min-slider');
-          const clonedMaxSlider = clone.querySelector('#price-max-slider');
-          const clonedTrack = clone.querySelector('#slider-track');
-          const clonedMinDisplay = clone.querySelector('#price-min-display');
-          const clonedMaxDisplay = clone.querySelector('#price-max-display');
-          
-          if (clonedMinSlider && clonedMaxSlider && clonedTrack) {
-            function updateMobileSlider() {
-              let minVal = parseInt(clonedMinSlider.value);
-              let maxVal = parseInt(clonedMaxSlider.value);
-              
-              if (minVal >= maxVal) {
-                if (this === clonedMinSlider) {
-                  clonedMaxSlider.value = minVal + 10;
-                  maxVal = minVal + 10;
-                } else {
-                  clonedMinSlider.value = maxVal - 10;
-                  minVal = maxVal - 10;
-                }
-              }
-              
-              clonedMinDisplay.textContent = '$' + minVal;
-              clonedMaxDisplay.textContent = '$' + maxVal;
-              
-              const rangeMin = parseInt(clonedMinSlider.min);
-              const rangeMax = parseInt(clonedMinSlider.max);
-              const percentMin = ((minVal - rangeMin) / (rangeMax - rangeMin)) * 100;
-              const percentMax = ((maxVal - rangeMin) / (rangeMax - rangeMin)) * 100;
-              
-              clonedTrack.style.left = percentMin + '%';
-              clonedTrack.style.width = (percentMax - percentMin) + '%';
-              
-              console.log('📱 Mobile slider updated:', percentMin + '% to ' + percentMax + '%');
-            }
-            
-            clonedMinSlider.addEventListener('input', updateMobileSlider);
-            clonedMaxSlider.addEventListener('input', updateMobileSlider);
-            updateMobileSlider.call(clonedMinSlider);
-          }
-          
-          setupPropertyTypeFilter();
-          setupRoomSelectors();
-          setupPetsToggle();
-          setupFilterActions();
+          setupMobileFilterControls(clone);
         }
       }
+    }
+    
+    function setupMobileFilterControls(clone) {
+      console.log('📱 Setting up mobile filter controls');
+      
+      // PRICE SLIDERS
+      const clonedMinSlider = clone.querySelector('#price-min-slider');
+      const clonedMaxSlider = clone.querySelector('#price-max-slider');
+      const clonedTrack = clone.querySelector('#slider-track');
+      const clonedMinDisplay = clone.querySelector('#price-min-display');
+      const clonedMaxDisplay = clone.querySelector('#price-max-display');
+      
+      if (clonedMinSlider && clonedMaxSlider && clonedTrack) {
+        function updateMobileSlider() {
+          let minVal = parseInt(clonedMinSlider.value);
+          let maxVal = parseInt(clonedMaxSlider.value);
+          
+          if (minVal >= maxVal) {
+            if (this === clonedMinSlider) {
+              clonedMaxSlider.value = minVal + 10;
+              maxVal = minVal + 10;
+            } else {
+              clonedMinSlider.value = maxVal - 10;
+              minVal = maxVal - 10;
+            }
+          }
+          
+          clonedMinDisplay.textContent = '$' + minVal;
+          clonedMaxDisplay.textContent = '$' + maxVal;
+          
+          const rangeMin = parseInt(clonedMinSlider.min);
+          const rangeMax = parseInt(clonedMinSlider.max);
+          const percentMin = ((minVal - rangeMin) / (rangeMax - rangeMin)) * 100;
+          const percentMax = ((maxVal - rangeMin) / (rangeMax - rangeMin)) * 100;
+          
+          clonedTrack.style.left = percentMin + '%';
+          clonedTrack.style.width = (percentMax - percentMin) + '%';
+          priceMin = minVal;
+          priceMax = maxVal;
+        }
+        
+        clonedMinSlider.addEventListener('input', updateMobileSlider);
+        clonedMaxSlider.addEventListener('input', updateMobileSlider);
+        updateMobileSlider.call(clonedMinSlider);
+      }
+      
+      // PROPERTY TYPE PILLS
+      const propertyTypePills = clone.querySelectorAll('.property-type-pill');
+      propertyTypePills.forEach(pill => {
+        pill.addEventListener('click', function() {
+          const type = this.textContent.trim();
+          const isActive = this.classList.contains('active');
+          
+          if (isActive) {
+            this.classList.remove('active');
+            this.style.background = 'white';
+            this.style.color = '#0F2C3A';
+            this.style.borderColor = '#E0E0E0';
+            selectedPropertyTypes = selectedPropertyTypes.filter(t => t !== type);
+          } else {
+            this.classList.add('active');
+            this.style.background = '#16A8EE';
+            this.style.color = 'white';
+            this.style.borderColor = '#16A8EE';
+            selectedPropertyTypes.push(type);
+          }
+        });
+      });
+      
+      // BEDROOMS
+      const bedroomsMinus = clone.querySelector('#bedrooms-minus');
+      const bedroomsPlus = clone.querySelector('#bedrooms-plus');
+      const bedroomsCount = clone.querySelector('#bedrooms-count');
+      
+      if (bedroomsMinus && bedroomsPlus && bedroomsCount) {
+        bedroomsMinus.addEventListener('click', () => {
+          if (bedroomsFilter > 0) {
+            bedroomsFilter--;
+            bedroomsCount.textContent = bedroomsFilter === 0 ? 'Any' : bedroomsFilter;
+            bedroomsMinus.style.opacity = bedroomsFilter === 0 ? '0.3' : '1';
+          }
+        });
+        
+        bedroomsPlus.addEventListener('click', () => {
+          bedroomsFilter++;
+          bedroomsCount.textContent = bedroomsFilter;
+          bedroomsMinus.style.opacity = '1';
+        });
+      }
+      
+      // BEDS
+      const bedsMinus = clone.querySelector('#beds-minus');
+      const bedsPlus = clone.querySelector('#beds-plus');
+      const bedsCount = clone.querySelector('#beds-count');
+      
+      if (bedsMinus && bedsPlus && bedsCount) {
+        bedsMinus.addEventListener('click', () => {
+          if (bedsFilter > 0) {
+            bedsFilter--;
+            bedsCount.textContent = bedsFilter === 0 ? 'Any' : bedsFilter;
+            bedsMinus.style.opacity = bedsFilter === 0 ? '0.3' : '1';
+          }
+        });
+        
+        bedsPlus.addEventListener('click', () => {
+          bedsFilter++;
+          bedsCount.textContent = bedsFilter;
+          bedsMinus.style.opacity = '1';
+        });
+      }
+      
+      // BATHROOMS
+      const bathroomsMinus = clone.querySelector('#bathrooms-minus');
+      const bathroomsPlus = clone.querySelector('#bathrooms-plus');
+      const bathroomsCount = clone.querySelector('#bathrooms-count');
+      
+      if (bathroomsMinus && bathroomsPlus && bathroomsCount) {
+        bathroomsMinus.addEventListener('click', () => {
+          if (bathroomsFilter > 0) {
+            bathroomsFilter--;
+            bathroomsCount.textContent = bathroomsFilter === 0 ? 'Any' : bathroomsFilter;
+            bathroomsMinus.style.opacity = bathroomsFilter === 0 ? '0.3' : '1';
+          }
+        });
+        
+        bathroomsPlus.addEventListener('click', () => {
+          bathroomsFilter++;
+          bathroomsCount.textContent = bathroomsFilter;
+          bathroomsMinus.style.opacity = '1';
+        });
+      }
+      
+      // PETS TOGGLE
+      const petsToggle = clone.querySelector('#pets-toggle');
+      if (petsToggle) {
+        petsToggle.addEventListener('click', function() {
+          petsAllowedFilter = !petsAllowedFilter;
+          
+          if (petsAllowedFilter) {
+            this.style.background = '#16A8EE';
+            this.querySelector('div').style.transform = 'translateX(20px)';
+          } else {
+            this.style.background = '#E0E0E0';
+            this.querySelector('div').style.transform = 'translateX(0)';
+          }
+        });
+      }
+      
+      console.log('✅ Mobile filter controls ready');
     }
     
     function formatDateShort(date) {
