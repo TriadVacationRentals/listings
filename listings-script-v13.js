@@ -2244,22 +2244,40 @@
       const container = document.getElementById('mobile-filters-container');
       const filterDropdown = document.getElementById('filter-dropdown');
       
+      console.log('📱 moveFiltersToOverlay called');
+      console.log('📱 Container:', container);
+      console.log('📱 Filter dropdown:', filterDropdown);
+      
       if (container && filterDropdown && window.innerWidth <= 768) {
         // Only clone if not already cloned
         if (container.children.length === 0) {
+          console.log('📱 Cloning filter dropdown to mobile...');
           const clone = filterDropdown.cloneNode(true);
           clone.style.display = 'block';
           clone.id = 'mobile-filter-dropdown';
+          
+          console.log('📱 Clone created:', clone);
           
           // Remove the action buttons from clone
           const clonedActions = clone.querySelector('div[style*="display: flex; gap: 12px"]');
           if (clonedActions && clonedActions.querySelector('#clear-filters')) {
             clonedActions.remove();
+            console.log('📱 Removed action buttons from clone');
           }
           
           container.appendChild(clone);
+          console.log('📱 Clone appended to container');
+          console.log('📱 Container now has', container.children.length, 'children');
+          
           setupMobileFilterControls(clone);
+        } else {
+          console.log('📱 Filters already cloned, skipping');
         }
+      } else {
+        console.log('📱 Cannot clone filters:');
+        console.log('  - Container exists:', !!container);
+        console.log('  - Filter dropdown exists:', !!filterDropdown);
+        console.log('  - Window width:', window.innerWidth);
       }
     }
     
