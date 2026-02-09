@@ -620,6 +620,7 @@
   
   .listings-wrapper .mobile-search-content {
     padding: 24px 20px;
+    padding-bottom: calc(24px + env(safe-area-inset-bottom, 20px)); /* Extra space at bottom */
     display: flex;
     flex-direction: column;
     gap: 24px;
@@ -787,6 +788,12 @@
     box-shadow: none;
     padding: 0;
     border-radius: 0;
+    display: block !important; /* Force display */
+  }
+  
+  /* Make sure all filter sections are visible */
+  .listings-wrapper #mobile-filters-container > * {
+    display: block;
   }
   
   /* Fix slider styles for mobile filters */
