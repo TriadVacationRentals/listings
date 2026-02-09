@@ -1,35 +1,4 @@
 // ============================================
-    // AUTO-DETECT WEBFLOW NAVBAR HEIGHT
-    // ============================================
-    
-    (function autoAdjustForWebflow() {
-      // Detect navbar height
-      const navbar = document.querySelector('nav, header, [data-nav], .navbar, .nav');
-      if (navbar && window.innerWidth <= 768) {
-        const navHeight = navbar.offsetHeight;
-        console.log('📏 Detected navbar height:', navHeight + 'px');
-        
-        // Inject custom styles with correct navbar height
-        const style = document.createElement('style');
-        style.textContent = `
-          @media (max-width: 768px) {
-            .listings-wrapper .listings-container {
-              top: ${navHeight}px !important;
-            }
-            .listings-wrapper .mobile-floating-buttons {
-              top: calc(${navHeight}px + 16px) !important;
-            }
-            .listings-wrapper .cards-section::before {
-              top: ${navHeight}px !important;
-            }
-          }
-        `;
-        document.head.appendChild(style);
-        console.log('✅ Auto-adjusted for navbar height');
-      }
-    })();
-    
-    // ============================================
     // PHASE 2 & 3: FETCH PROPERTIES + MAP
     // ============================================
     
@@ -137,15 +106,8 @@
       const rating = property.averageRating;
       const hasRating = rating && rating > 0;
       
-      // Build property URL with search parameters
-      const params = new URLSearchParams();
-      if (checkinDate) params.append('checkin', checkinDate);
-      if (checkoutDate) params.append('checkout', checkoutDate);
-      if (guestCount > 1) params.append('guests', guestCount);
-      if (selectedLocation) params.append('location', selectedLocation);
-      
-      const queryString = params.toString();
-      const propertyUrl = `/listings/${property.listingId}${queryString ? '?' + queryString : ''}`;
+      // Build property URL
+      const propertyUrl = `/listings/${property.listingId}`;
       
       return `
         <div class="property-card" data-listing-id="${property.listingId}" data-lat="${property.latitude}" data-lng="${property.longitude}">
@@ -427,19 +389,9 @@
         iconAnchor: [null, 14]
       });
       
-      // Build property URL with search parameters for popup
-      const params = new URLSearchParams();
-      if (checkinDate) params.append('checkin', checkinDate);
-      if (checkoutDate) params.append('checkout', checkoutDate);
-      if (guestCount > 1) params.append('guests', guestCount);
-      if (selectedLocation) params.append('location', selectedLocation);
-      
-      const queryString = params.toString();
-      const popupUrl = `/listings/${property.listingId}${queryString ? '?' + queryString : ''}`;
-      
       // Create popup content
       const popupContent = `
-        <a href="${popupUrl}" style="text-decoration: none; color: inherit; display: block;">
+        <a href="/listings/${property.listingId}" style="text-decoration: none; color: inherit; display: block;">
           <div style="font-family: 'Manrope', sans-serif;">
             ${property.featuredImage ? `<img src="${property.featuredImage}" style="width: 100%; height: 150px; object-fit: cover; border-radius: 12px 12px 0 0; margin-bottom: 12px;" alt="${property.name}">` : ''}
             <div style="padding: 0 8px 8px;">
@@ -960,60 +912,120 @@
         const { lat, lng } = placeData.result.geometry.location;
         console.log(`✅ Location: ${lat}, ${lng}`);
         
-        // Step 2: Filter properties by location (30 mile radius)
-        console.log('🗺️ Filtering properties by location...');
-        const nearbyProperties = allProperties.filter(property => {
-          const propLat = parseFloat(property.latitude);
-          const propLng = parseFloat(property.longitude);
-          
-          if (isNaN(propLat) || isNaN(propLng)) return false;
-          
-          const distance = calculateDistance(lat, lng, propLat, propLng);
-          return distance <= 30; // 30 mile radius
-        });
+        // Step 2: Progressive search with expanding radius
+        let radius = 30; // Start with 30 miles
+        const maxRadius = 200; // Max 200 miles
+        let nearbyProperties = [];
+        let finalProperties = [];
         
-        console.log(`📊 Found ${nearbyProperties.length} properties within 30 miles`);
+        while (radius <= maxRadius) {
+          console.log(`🗺️ Searching within ${radius} mile radius...`);
+          
+          // Filter properties by current radius
+          nearbyProperties = allProperties.filter(property => {
+            const propLat = parseFloat(property.latitude);
+            const propLng = parseFloat(property.longitude);
+            
+            if (isNaN(propLat) || isNaN(propLng)) return false;
+            
+            const distance = calculateDistance(lat, lng, propLat, propLng);
+            return distance <= radius;
+          });
+          
+          console.log(`📊 Found ${nearbyProperties.length} properties within ${radius} miles`);
+          
+          if (nearbyProperties.length === 0) {
+            // No properties found, expand radius
+            radius += 30; // Increase by 30 miles
+            continue;
+          }
+          
+          // Step 3: Check availability if dates are selected
+          let availableProperties = nearbyProperties;
+          
+          if (searchParams.checkin && searchParams.checkout) {
+            console.log('📅 Checking availability...');
+            
+            availableProperties = await checkAvailability(
+              nearbyProperties,
+              searchParams.checkin,
+              searchParams.checkout,
+              lat,
+              lng
+            );
+            
+            console.log(`✅ ${availableProperties.length} available properties`);
+            
+            if (availableProperties.length === 0) {
+              // No available properties, expand radius
+              radius += 30;
+              continue;
+            }
+          }
+          
+          // Step 4: Apply current filters
+          finalProperties = applyCurrentFilters(availableProperties);
+          
+          console.log(`🎯 ${finalProperties.length} properties match all criteria at ${radius} mile radius`);
+          
+          if (finalProperties.length > 0) {
+            // Found properties! Break the loop
+            break;
+          }
+          
+          // No properties match filters, expand radius
+          radius += 30;
+        }
         
-        if (nearbyProperties.length === 0) {
-          showNoResultsState('No properties found in this area');
+        // Check if we found any properties
+        if (finalProperties.length === 0) {
+          showNoResultsState(`No properties found within ${maxRadius} miles that match your search criteria. Try adjusting your filters or dates.`);
+          // Still zoom to searched location
+          mapInstance.setView([lat, lng], 8);
           return;
         }
         
-        // Step 3: Check availability if dates are selected
-        let availableProperties = nearbyProperties;
+        // Step 5: Update map to show the area where properties were found
+        // Calculate the appropriate zoom level based on radius
+        let zoomLevel = 10; // Default
+        if (radius <= 30) zoomLevel = 10;
+        else if (radius <= 60) zoomLevel = 9;
+        else if (radius <= 100) zoomLevel = 8;
+        else if (radius <= 150) zoomLevel = 7;
+        else zoomLevel = 6;
         
-        if (searchParams.checkin && searchParams.checkout) {
-          console.log('📅 Checking availability...');
-          
-          availableProperties = await checkAvailability(
-            nearbyProperties,
-            searchParams.checkin,
-            searchParams.checkout,
-            lat,
-            lng
-          );
-          
-          console.log(`✅ ${availableProperties.length} available properties`);
-          
-          if (availableProperties.length === 0) {
-            showNoResultsState('No available properties for these dates');
-            return;
-          }
-        }
+        mapInstance.setView([lat, lng], zoomLevel);
         
-        // Step 4: Update map to show search area
-        mapInstance.setView([lat, lng], 10);
-        
-        // Step 5: Apply current filters and update display
-        const filteredProperties = applyCurrentFilters(availableProperties);
-        
-        console.log(`🎯 Final results: ${filteredProperties.length} properties`);
+        console.log(`✅ Showing ${finalProperties.length} properties at ${radius} mile radius (zoom: ${zoomLevel})`);
         
         // Update display
-        renderPropertyCards(filteredProperties);
+        renderPropertyCards(finalProperties);
+        updateMapMarkers(finalProperties);
         
         // Update URL with search params (optional - for sharing)
         updateURLParams(searchParams);
+        
+        // Show success message if we had to expand the search
+        if (radius > 30) {
+          setTimeout(() => {
+            const container = document.getElementById('cards-container');
+            const message = document.createElement('div');
+            message.style.cssText = `
+              background: #16A8EE;
+              color: white;
+              padding: 12px 20px;
+              border-radius: 12px;
+              margin-bottom: 16px;
+              font-size: 14px;
+              text-align: center;
+            `;
+            message.textContent = `Expanded search to ${radius} miles to find properties matching your criteria`;
+            container.insertBefore(message, container.firstChild);
+            
+            // Remove message after 5 seconds
+            setTimeout(() => message.remove(), 5000);
+          }, 100);
+        }
         
       } catch (error) {
         console.error('❌ Search error:', error);
