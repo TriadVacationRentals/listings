@@ -53,7 +53,19 @@
   z-index: 1;
   padding: 0 7%; /* 7% horizontal padding */
   padding-top: 20px; /* 20px spacing below line */
-  border-top: 1px solid #e5e7eb; /* Light grey line */
+}
+
+/* Fixed grey line at top of content */
+.listings-wrapper .content-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #e5e7eb;
+  z-index: 10;
+  pointer-events: none;
 }
 
 /* Cards on left */
@@ -326,11 +338,14 @@
     display: none !important;
   }
   
-  /* Reset content wrapper padding on mobile (remove on desktop) */
+  /* Ensure content wrapper has padding and line */
   .listings-wrapper .content-wrapper {
-    border-top: 1px solid #e5e7eb;
     padding: 0 7%;
     padding-top: 20px;
+  }
+  
+  .listings-wrapper .content-wrapper::before {
+    display: block;
   }
 }
 
@@ -349,7 +364,11 @@
     height: 100vh;
     position: relative;
     padding: 0; /* Remove desktop padding */
-    border-top: none; /* Remove desktop line */
+  }
+  
+  /* Hide the grey line on mobile */
+  .listings-wrapper .content-wrapper::before {
+    display: none;
   }
   
   /* Cards section - on mobile, position absolutely over map */
