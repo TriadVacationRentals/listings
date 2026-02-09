@@ -1,13 +1,13 @@
-    /* ============================================ */
+/* ============================================ */
     /* RESET & VARIABLES */
     /* ============================================ */
-    * {
-      margin: 0;
-      padding: 0;
+    
+    /* Namespace all styles under .triad-listings to avoid Webflow conflicts */
+    .triad-listings     .triad-listings * {
       box-sizing: border-box;
     }
 
-    :root {
+    .triad-listings     .triad-listings {
       --primary: #16A8EE;
       --text: #0F2C3A;
       --text-muted: #8b98a5;
@@ -16,7 +16,8 @@
       --bg-card: #f5f5f5;
     }
 
-    body {
+    .triad-listings     .triad-listings,
+    .triad-listings     .triad-listings body {
       font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       color: var(--text);
       background: var(--bg-card);
@@ -27,7 +28,7 @@
     /* ============================================ */
     /* MAIN LAYOUT */
     /* ============================================ */
-    .listings-container {
+    .triad-listings     .triad-listings .listings-container {
       display: flex;
       flex-direction: column;
       height: 100vh;
@@ -36,7 +37,7 @@
     }
 
     /* Search bar at top */
-    .search-section {
+    .triad-listings     .search-section {
       background: none;
       padding: 20px;
       z-index: 1000;
@@ -44,7 +45,7 @@
     }
 
     /* Content area with cards and map */
-    .content-wrapper {
+    .triad-listings     .content-wrapper {
       display: flex;
       flex: 1;
       overflow: hidden;
@@ -54,7 +55,7 @@
     }
 
     /* Cards on left */
-    .cards-section {
+    .triad-listings     .cards-section {
       display: block;
       flex: 0 0 45%;
       overflow-y: auto;
@@ -64,7 +65,7 @@
     }
 
     /* Map on right */
-    .map-section {
+    .triad-listings     .map-section {
       flex: 1;
       position: relative;
       background: #e0e0e0;
@@ -74,11 +75,11 @@
     /* ============================================ */
     /* SEARCH BAR */
     /* ============================================ */
-    .search-container {
+    .triad-listings     .search-container {
       width: 100%;
     }
 
-    .search-bar {
+    .triad-listings     .search-bar {
       background: white;
       border-radius: 20px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
@@ -89,7 +90,7 @@
       height: 63px;
     }
 
-    .search-field {
+    .triad-listings     .search-field {
       flex: 1;
       position: relative;
       padding: 11px 16px;
@@ -101,26 +102,26 @@
       z-index: auto;
     }
     
-    .search-field.active {
+    .triad-listings     .search-field.active {
       z-index: 1001;
     }
 
-    .search-field:first-child {
+    .triad-listings     .search-field:first-child {
       border-radius: 20px 0 0 20px;
     }
 
-    .search-field:hover {
+    .triad-listings     .search-field:hover {
       background: rgba(0,0,0,0.02);
     }
 
-    .search-field-inner {
+    .triad-listings     .search-field-inner {
       display: flex;
       align-items: center;
       gap: 0;
       width: 100%;
     }
 
-    .search-field-content {
+    .triad-listings     .search-field-content {
       flex: 1;
       min-width: 0;
       display: flex;
@@ -128,7 +129,7 @@
       gap: 2px;
     }
 
-    .search-label {
+    .triad-listings     .search-label {
       font-size: 11px;
       font-weight: 600;
       color: var(--text);
@@ -136,7 +137,7 @@
       line-height: 1;
     }
 
-    .search-input {
+    .triad-listings     .search-input {
       width: 100%;
       border: none;
       background: none;
@@ -148,11 +149,11 @@
       line-height: 1.2;
     }
 
-    .search-input::placeholder {
+    .triad-listings     .search-input::placeholder {
       color: var(--text-muted);
     }
 
-    .search-btn {
+    .triad-listings     .search-btn {
       background: #0F2C3A;
       color: white;
       border: none;
@@ -174,12 +175,12 @@
       min-width: 130px;
     }
 
-    .search-btn:hover {
+    .triad-listings     .search-btn:hover {
       background: #16A8EE;
     }
 
     /* Filter button */
-    .filter-btn {
+    .triad-listings     .filter-btn {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -193,11 +194,11 @@
       flex-shrink: 0;
     }
 
-    .filter-btn:hover {
+    .triad-listings     .filter-btn:hover {
       transform: scale(1.1);
     }
 
-    .filter-btn svg {
+    .triad-listings     .filter-btn svg {
       width: 24px;
       height: 24px;
       color: #0F2C3A;
@@ -206,7 +207,7 @@
     /* ============================================ */
     /* PROPERTY CARDS */
     /* ============================================ */
-    .cards-grid {
+    .triad-listings     .cards-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 20px;
@@ -232,7 +233,7 @@
       }
     }
 
-    .property-card {
+    .triad-listings     .property-card {
       background: white;
       border-radius: 16px;
       overflow: hidden;
@@ -243,17 +244,17 @@
     }
     
     /* Hide mobile-only elements on desktop */
-    .mobile-floating-buttons,
-    .view-toggle-bar {
+    .triad-listings     .mobile-floating-buttons,
+    .triad-listings     .view-toggle-bar {
       display: none;
     }
 
-    .property-card:hover {
+    .triad-listings     .property-card:hover {
       box-shadow: 0 4px 16px rgba(0,0,0,0.12);
       transform: translateY(-2px);
     }
     
-    .property-type-badge {
+    .triad-listings     .property-type-badge {
       position: absolute;
       top: 12px;
       left: 12px;
@@ -270,23 +271,23 @@
       z-index: 1;
     }
     
-    .property-type-badge svg {
+    .triad-listings     .property-type-badge svg {
       width: 20px;
       height: 20px;
       flex-shrink: 0;
     }
 
-    .card-image {
+    .triad-listings     .card-image {
       width: 100%;
       height: 240px;
       object-fit: cover;
     }
 
-    .card-content {
+    .triad-listings     .card-content {
       padding: 16px;
     }
 
-    .card-location {
+    .triad-listings     .card-location {
       display: flex;
       align-items: center;
       gap: 6px;
@@ -295,25 +296,25 @@
       margin-bottom: 4px;
     }
 
-    .card-location svg {
+    .triad-listings     .card-location svg {
       width: 16px;
       height: 16px;
     }
 
-    .card-rating {
+    .triad-listings     .card-rating {
       display: inline-flex;
       align-items: center;
       gap: 4px;
       margin-left: auto;
     }
 
-    .card-rating svg {
+    .triad-listings     .card-rating svg {
       width: 14px;
       height: 14px;
       color: #16A8EE;
     }
 
-    .card-title {
+    .triad-listings     .card-title {
       font-size: 18px;
       font-weight: 600;
       color: var(--text);
@@ -321,7 +322,7 @@
       line-height: 1.3;
     }
 
-    .card-details {
+    .triad-listings     .card-details {
       display: flex;
       gap: 6px;
       font-size: 14px;
@@ -329,13 +330,13 @@
       margin-bottom: 12px;
     }
 
-    .card-price {
+    .triad-listings     .card-price {
       font-size: 16px;
       font-weight: 600;
       color: var(--text);
     }
 
-    .card-price span {
+    .triad-listings     .card-price span {
       font-weight: 400;
       font-size: 14px;
     }
@@ -830,17 +831,17 @@
     }
     
     /* Hide Leaflet attribution */
-    .leaflet-control-attribution {
+    .triad-listings     .leaflet-control-attribution {
       display: none;
     }
     
     /* Custom price markers (Airbnb style) */
-    .custom-marker-wrapper {
+    .triad-listings     .custom-marker-wrapper {
       background: transparent;
       border: none;
     }
     
-    .custom-marker {
+    .triad-listings     .custom-marker {
       background: white;
       color: #0F2C3A;
       padding: 6px 10px;
@@ -854,7 +855,7 @@
       transition: all 0.2s;
     }
     
-    .custom-marker:hover {
+    .triad-listings     .custom-marker:hover {
       background: #0F2C3A;
       color: white;
       transform: scale(1.05);
@@ -863,24 +864,24 @@
     }
     
     /* Custom popup styling */
-    .leaflet-popup-content-wrapper {
+    .triad-listings     .leaflet-popup-content-wrapper {
       padding: 0;
       border-radius: 16px;
       box-shadow: 0 6px 20px rgba(0,0,0,0.15);
       overflow: hidden;
     }
     
-    .leaflet-popup-content {
+    .triad-listings     .leaflet-popup-content {
       margin: 0;
       width: 280px !important;
     }
     
-    .leaflet-popup-tip {
+    .triad-listings     .leaflet-popup-tip {
       background: white;
     }
 
     /* Loading state */
-    .loading-spinner {
+    .triad-listings     .loading-spinner {
       position: absolute;
       top: 50%;
       left: 50%;
@@ -888,7 +889,7 @@
       text-align: center;
     }
 
-    .spinner {
+    .triad-listings     .spinner {
       width: 48px;
       height: 48px;
       border: 4px solid #f3f3f3;
@@ -902,26 +903,26 @@
       100% { transform: rotate(360deg); }
     }
 
-    .loading-text {
+    .triad-listings     .loading-text {
       margin-top: 12px;
       font-size: 14px;
       color: var(--text-muted);
     }
 
     /* Empty state */
-    .empty-state {
+    .triad-listings     .empty-state {
       padding: 60px 20px;
       text-align: center;
     }
 
-    .empty-state h3 {
+    .triad-listings     .empty-state h3 {
       font-size: 24px;
       font-weight: 600;
       color: var(--text);
       margin-bottom: 12px;
     }
 
-    .empty-state p {
+    .triad-listings     .empty-state p {
       font-size: 16px;
       color: var(--text-muted);
       line-height: 1.5;
