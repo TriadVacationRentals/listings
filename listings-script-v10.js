@@ -1752,7 +1752,10 @@
       
       // Search trigger button - opens overlay
       if (searchTrigger) {
-        searchTrigger.addEventListener('click', () => {
+        searchTrigger.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log('📱 Mobile search trigger clicked');
           overlay.classList.add('active');
           syncOverlayFields();
           moveFiltersToOverlay();
@@ -1787,11 +1790,22 @@
       // Apply search/filters
       if (applyBtn) {
         applyBtn.addEventListener('click', async () => {
+          console.log('📱 Mobile apply button clicked');
+          
           // Sync mobile fields to desktop
           syncMobileToDesktop();
           
-          // Run search
-          await handleSearch();
+          // Run search if location is selected
+          if (selectedLocation) {
+            console.log('📱 Running search...');
+            await handleSearch();
+          } else {
+            console.log('📱 No location selected, just applying filters');
+            // Just apply filters to current properties
+            const filteredProperties = applyCurrentFilters(allProperties);
+            renderPropertyCards(filteredProperties);
+            updateMapMarkers(filteredProperties);
+          }
           
           // Close overlay
           overlay.classList.remove('active');
@@ -1811,9 +1825,13 @@
           const locationInput = document.getElementById('location-input');
           if (locationInput) locationInput.value = '';
           
-          document.getElementById('checkin-display').textContent = 'Add date';
-          document.getElementById('checkout-display').value = 'Add date';
-          document.getElementById('guests-display').value = '1 guest';
+          const checkinDisplay = document.getElementById('checkin-display');
+          const checkoutDisplay = document.getElementById('checkout-display');
+          const guestsDisplay = document.getElementById('guests-display');
+          
+          if (checkinDisplay) checkinDisplay.value = 'Add date';
+          if (checkoutDisplay) checkoutDisplay.value = 'Add date';
+          if (guestsDisplay) guestsDisplay.value = '1 guest';
           
           // Clear filters
           const clearFiltersBtn = document.querySelector('#mobile-filters-container #clear-filters');
