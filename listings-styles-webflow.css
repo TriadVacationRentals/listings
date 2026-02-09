@@ -1,9 +1,9 @@
 /* ============================================ */
-/* LISTINGS PAGE - WEBFLOW INTEGRATION */
+/* RESET & VARIABLES */
 /* ============================================ */
-
-/* Core resets for listings container only */
 .listings-wrapper * {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
@@ -14,48 +14,28 @@
   --border: #d7dee6;
   --bg: #ffffff;
   --bg-card: #f5f5f5;
-  font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  color: var(--text);
 }
 
-/* Main container - works with Webflow layout */
+.listings-wrapper {
+  font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--text);
+  background: var(--bg-card);
+  margin: 0;
+  padding: 0;
+}
+
+/* ============================================ */
+/* MAIN LAYOUT */
+/* ============================================ */
 .listings-wrapper .listings-container {
   display: flex;
   flex-direction: column;
+  height: 100vh;
   width: 100%;
   margin: 0;
-  position: relative;
 }
 
-/* Desktop: Calculate height minus navbar and footer */
-@media (min-width: 769px) {
-  .listings-wrapper .listings-container {
-    height: calc(100vh - 80px - 200px); /* Adjust 80px (navbar) and 200px (footer) to your actual sizes */
-    min-height: 600px;
-  }
-}
-
-/* Mobile: Full screen, hide Webflow footer on this page */
-@media (max-width: 768px) {
-  /* Hide Webflow footer on mobile listings page */
-  body.listings-page footer {
-    display: none !important;
-  }
-  
-  .listings-wrapper .listings-container {
-    position: fixed;
-    top: 60px; /* Height of your Webflow navbar - adjust this! */
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: auto;
-    z-index: 100;
-  }
-}
-
-/* ============================================ */
-/* SEARCH BAR (DESKTOP) */
-/* ============================================ */
+/* Search bar at top */
 .listings-wrapper .search-section {
   background: none;
   padding: 20px;
@@ -63,10 +43,39 @@
   position: relative;
 }
 
+/* Content area with cards and map */
+.listings-wrapper .content-wrapper {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+/* Cards on left */
+.listings-wrapper .cards-section {
+  display: block;
+  flex: 0 0 45%;
+  overflow-y: auto;
+  padding: 20px;
+  background: var(--bg-card);
+  width: 100%;
+}
+
+/* Map on right */
+.listings-wrapper .map-section {
+  flex: 1;
+  position: relative;
+  background: #e0e0e0;
+  width: 100%;
+}
+
+/* ============================================ */
+/* SEARCH BAR */
+/* ============================================ */
 .listings-wrapper .search-container {
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
 }
 
 .listings-wrapper .search-bar {
@@ -92,7 +101,7 @@
   z-index: auto;
 }
 
-.listings-wrapper .search-field.active {
+.search-field.active {
   z-index: 1001;
 }
 
@@ -169,6 +178,7 @@
   background: #16A8EE;
 }
 
+/* Filter button */
 .listings-wrapper .filter-btn {
   display: flex;
   align-items: center;
@@ -194,34 +204,6 @@
 }
 
 /* ============================================ */
-/* CONTENT AREA */
-/* ============================================ */
-.listings-wrapper .content-wrapper {
-  display: flex;
-  flex: 1;
-  overflow: hidden;
-  width: 100%;
-  position: relative;
-  z-index: 1;
-}
-
-.listings-wrapper .cards-section {
-  display: block;
-  flex: 0 0 45%;
-  overflow-y: auto;
-  padding: 20px;
-  background: var(--bg-card);
-  width: 100%;
-}
-
-.listings-wrapper .map-section {
-  flex: 1;
-  position: relative;
-  background: #e0e0e0;
-  width: 100%;
-}
-
-/* ============================================ */
 /* PROPERTY CARDS */
 /* ============================================ */
 .listings-wrapper .cards-grid {
@@ -231,6 +213,7 @@
   transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Responsive grid */
 @media (min-width: 1400px) {
   .listings-wrapper .cards-grid {
     grid-template-columns: repeat(3, 1fr);
@@ -257,6 +240,12 @@
   transition: all 0.3s;
   cursor: pointer;
   position: relative;
+}
+
+/* Hide mobile-only elements on desktop */
+.listings-wrapper .mobile-floating-buttons,
+.listings-wrapper .view-toggle-bar {
+  display: none;
 }
 
 .listings-wrapper .property-card:hover {
@@ -352,137 +341,22 @@
 }
 
 /* ============================================ */
-/* MAP STYLES */
-/* ============================================ */
-.listings-wrapper #listings-map {
-  width: 100%;
-  height: 100%;
-}
-
-.listings-wrapper .leaflet-control-attribution {
-  display: none;
-}
-
-.listings-wrapper .custom-marker-wrapper {
-  background: transparent;
-  border: none;
-}
-
-.listings-wrapper .custom-marker {
-  background: white;
-  color: #0F2C3A;
-  padding: 6px 10px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 600;
-  white-space: nowrap;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  border: 1px solid rgba(0,0,0,0.08);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.listings-wrapper .custom-marker:hover {
-  background: #0F2C3A;
-  color: white;
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-  z-index: 1000;
-}
-
-.listings-wrapper .leaflet-popup-content-wrapper {
-  padding: 0;
-  border-radius: 16px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-  overflow: hidden;
-}
-
-.listings-wrapper .leaflet-popup-content {
-  margin: 0;
-  width: 280px !important;
-}
-
-.listings-wrapper .leaflet-popup-tip {
-  background: white;
-}
-
-/* Loading state */
-.listings-wrapper .loading-spinner {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-}
-
-.listings-wrapper .spinner {
-  width: 48px;
-  height: 48px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #0F2C3A;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.listings-wrapper .empty-state {
-  padding: 60px 20px;
-  text-align: center;
-}
-
-.listings-wrapper .empty-state h3 {
-  font-size: 24px;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 12px;
-}
-
-.listings-wrapper .empty-state p {
-  font-size: 16px;
-  color: var(--text-muted);
-  line-height: 1.5;
-}
-
-/* Hide mobile elements on desktop */
-@media (min-width: 769px) {
-  .listings-wrapper .mobile-floating-buttons,
-  .listings-wrapper .view-toggle-bar,
-  .listings-wrapper .mobile-search-overlay {
-    display: none !important;
-  }
-}
-
-/* ============================================ */
 /* MOBILE RESPONSIVE */
 /* ============================================ */
 @media (max-width: 768px) {
-  /* Hide desktop search */
+  /* Hide desktop search section */
   .listings-wrapper .search-section {
     display: none;
   }
   
-  /* Content: full height */
+  /* Content wrapper: full height */
   .listings-wrapper .content-wrapper {
     flex-direction: column;
-    height: 100%;
+    height: 100vh;
     position: relative;
   }
   
-  /* Map: full screen by default */
-  .listings-wrapper .map-section {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 1;
-  }
-  
-  /* Cards: positioned absolutely over map, hidden by default */
+  /* Cards section - on mobile, position absolutely over map */
   .listings-wrapper .cards-section {
     position: absolute;
     top: 0;
@@ -492,77 +366,117 @@
     background: white;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    padding-bottom: 80px; /* Space for toggle bar */
+    padding-bottom: 68px;
     display: none;
     z-index: 100;
   }
   
-  /* White overlay at top so cards scroll behind search */
+  /* Solid white at top so cards scroll behind search bar cleanly */
   .listings-wrapper .cards-section::before {
     content: '';
     position: fixed;
-    top: 60px; /* Webflow navbar height - adjust! */
+    top: 0;
     left: 0;
     right: 0;
-    height: 75px; /* Search button height */
+    height: 55px;
     background: white;
     pointer-events: none;
     z-index: 10;
   }
   
-  /* Show cards when toggle is OFF */
-  .listings-wrapper .cards-section.list-view-active {
+  .cards-section.list-view-active {
     display: block;
   }
   
   /* Hide map when list is active */
-  .listings-wrapper .map-section.list-view-active #listings-map {
+  .map-section.list-view-active #listings-map {
     display: none;
   }
   
-  /* Cards grid spacing */
-  .listings-wrapper .list-view-active .cards-grid {
+  /* List view header */
+  .list-view-header {
+    display: none;
+    padding: 16px 16px 0;
+    align-items: center;
+    gap: 12px;
+    background: white;
+  }
+  
+  .list-view-active .list-view-header {
+    display: flex;
+  }
+  
+  .back-to-map-btn {
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #0F2C3A;
+    cursor: pointer;
+    padding: 8px;
+  }
+  
+  .back-to-map-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  /* Cards grid in list view */
+  .list-view-active .listings-wrapper .cards-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: 16px;
     padding: 16px;
-    padding-top: 90px; /* Below search button */
-    padding-bottom: 100px; /* Above toggle */
+    padding-top: 100px;
+    padding-bottom: 84px;
     background: white;
     min-height: 100%;
   }
   
-  /* Mobile floating search button */
-  .listings-wrapper .mobile-floating-buttons {
+  /* Hide bottom sheet handle */
+  .bottom-sheet-handle {
+    display: none;
+  }
+  
+  /* Map section: full screen */
+  .listings-wrapper .map-section {
     position: fixed;
-    top: calc(60px + 16px); /* Navbar + spacing - ADJUST NAVBAR HEIGHT! */
+    top: 0;
     left: 0;
     right: 0;
-    z-index: 1001;
-    display: flex !important;
-    justify-content: center;
-    padding: 0 20px;
-    gap: 12px;
-    pointer-events: none;
+    bottom: 0;
+    z-index: 1;
+  }
+  
+  /* Floating buttons on map */
+  .listings-wrapper .mobile-floating-buttons {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    right: 16px;
+    z-index: 1002;
+    display: flex;
+    gap: 8px;
   }
   
   .listings-wrapper .mobile-search-trigger {
     flex: 1;
-    max-width: 400px;
     background: white;
     border: none;
     border-radius: 30px;
-    padding: 14px 20px;
-    box-shadow: 0 2px 16px rgba(0,0,0,0.2);
+    padding: 12px 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.15);
     display: flex;
     align-items: center;
     gap: 12px;
     font-family: inherit;
-    font-size: 15px;
-    font-weight: 500;
+    font-size: 14px;
     color: #6b7280;
     cursor: pointer;
-    pointer-events: auto;
+    width: 100%;
   }
   
   .listings-wrapper .mobile-search-trigger svg {
@@ -572,9 +486,33 @@
     flex-shrink: 0;
   }
   
-  /* Map View toggle - FIXED at bottom */
+  .mobile-filter-trigger {
+    display: none;
+  }
+  
+  .mobile-filter-trigger svg {
+    width: 20px;
+    height: 20px;
+    color: #0F2C3A;
+  }
+  
+  /* Show List bar (full width at bottom) */
+  /* Mobile floating buttons */
+  .listings-wrapper .mobile-floating-buttons {
+    position: absolute;
+    top: 20px;
+    left: 0;
+    right: 0;
+    z-index: 1001;
+    display: flex !important;
+    justify-content: center;
+    padding: 0 20px;
+    gap: 12px;
+  }
+  
+  /* View toggle bar - mobile only */
   .listings-wrapper .view-toggle-bar {
-    position: fixed;
+    position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
@@ -583,7 +521,6 @@
     border-top: 1px solid #e5e7eb;
     border-radius: 30px 30px 0 0;
     padding: 16px 20px;
-    padding-bottom: calc(16px + env(safe-area-inset-bottom)); /* iPhone bottom spacing */
     box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
     display: flex !important;
     align-items: center;
@@ -635,15 +572,15 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
   }
   
-  .listings-wrapper .view-toggle-switch input:checked + .view-toggle-slider {
+  .listings-wrapper .view-toggle-switch input:checked + .listings-wrapper .view-toggle-slider {
     background-color: #16A8EE;
   }
   
-  .listings-wrapper .view-toggle-switch input:checked + .view-toggle-slider:before {
+  .listings-wrapper .view-toggle-switch input:checked + .listings-wrapper .view-toggle-slider:before {
     transform: translateX(22px);
   }
   
-  /* Mobile search overlay */
+  /* Search/Filter overlay - slides from bottom */
   .listings-wrapper .mobile-search-overlay {
     position: fixed;
     top: 0;
@@ -654,10 +591,9 @@
     z-index: 2000;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s;
   }
   
-  .listings-wrapper .mobile-search-overlay.active {
+  .mobile-search-overlay.active {
     opacity: 1;
     pointer-events: auto;
   }
@@ -676,7 +612,7 @@
     transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
   }
   
-  .listings-wrapper .mobile-search-overlay.active .mobile-search-panel {
+  .mobile-search-overlay.active .listings-wrapper .mobile-search-panel {
     transform: translateY(0);
   }
   
@@ -697,7 +633,7 @@
     font-weight: 600;
   }
   
-  .listings-wrapper .mobile-search-close {
+  .mobile-search-close {
     background: none;
     border: none;
     font-size: 28px;
@@ -714,7 +650,6 @@
   
   .listings-wrapper .mobile-search-content {
     padding: 24px 20px;
-    padding-bottom: calc(24px + env(safe-area-inset-bottom));
     display: flex;
     flex-direction: column;
     gap: 24px;
@@ -750,6 +685,7 @@
     border-color: #16A8EE;
   }
   
+  /* Mobile search buttons - now inside scrollable content */
   .listings-wrapper .mobile-search-clear {
     padding: 14px 24px;
     border: none;
@@ -771,5 +707,247 @@
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
+  }
+  
+  /* Filter content inside overlay */
+  #mobile-filters-container #filter-dropdown {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    width: 100% !important;
+    max-height: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    display: block !important;
+    padding: 0 !important;
+  }
+  
+  /* Hide the desktop filter dropdown on mobile */
+  .listings-wrapper .search-bar #filter-dropdown {
+    display: none !important;
+  }
+  
+  /* Mobile calendar wrapper */
+  .listings-wrapper .calendar-wrapper-mobile {
+    display: none;
+    margin: 16px 0;
+  }
+  
+  .calendar-wrapper-mobile.active {
+    display: block;
+  }
+  
+  /* Mobile guest popup */
+  .listings-wrapper .guest-popup-mobile {
+    display: none;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 16px 0;
+  }
+  
+  .guest-popup-mobile.active {
+    display: block;
+  }
+  
+  .guest-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .guest-info {
+    flex: 1;
+  }
+  
+  .guest-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #0F2C3A;
+  }
+  
+  .guest-desc {
+    font-size: 12px;
+    color: #9ca3af;
+    margin-top: 2px;
+  }
+  
+  .guest-controls {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  
+  .guest-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1.5px solid #d1d5db;
+    background: white;
+    color: #6b7280;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    transition: all 0.2s;
+  }
+  
+  .guest-btn:hover:not(:disabled) {
+    border-color: #0F2C3A;
+    color: #0F2C3A;
+  }
+  
+  .guest-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+  
+  .guest-number {
+    font-size: 15px;
+    font-weight: 600;
+    color: #0F2C3A;
+    min-width: 24px;
+    text-align: center;
+  }
+}
+
+/* Desktop only */
+@media (min-width: 769px) {
+  .listings-wrapper .mobile-floating-buttons,
+  .show-list-btn,
+  .listings-wrapper .mobile-search-overlay,
+  .list-view-header {
+    display: none !important;
+  }
+}
+.listings-wrapper #listings-map {
+  width: 100%;
+  height: 100%;
+}
+
+/* Hide Leaflet attribution */
+.listings-wrapper .leaflet-control-attribution {
+  display: none;
+}
+
+/* Custom price markers (Airbnb style) */
+.listings-wrapper .custom-marker-wrapper {
+  background: transparent;
+  border: none;
+}
+
+.listings-wrapper .custom-marker {
+  background: white;
+  color: #0F2C3A;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  border: 1px solid rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.listings-wrapper .custom-marker:hover {
+  background: #0F2C3A;
+  color: white;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  z-index: 1000;
+}
+
+/* Custom popup styling */
+.listings-wrapper .leaflet-popup-content-wrapper {
+  padding: 0;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  overflow: hidden;
+}
+
+.listings-wrapper .leaflet-popup-content {
+  margin: 0;
+  width: 280px !important;
+}
+
+.listings-wrapper .leaflet-popup-tip {
+  background: white;
+}
+
+/* Loading state */
+.listings-wrapper .loading-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.listings-wrapper .spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #0F2C3A;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+/* Empty state */
+.listings-wrapper .empty-state {
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.listings-wrapper .empty-state h3 {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+
+.listings-wrapper .empty-state p {
+  font-size: 16px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ============================================ */
+/* RESPONSIVE - MOBILE */
+/* ============================================ */
+@media (max-width: 768px) {
+  /* Hide desktop search on mobile */
+  .listings-wrapper .search-section {
+    display: none;
+  }
+
+  /* Stack content vertically on mobile */
+  .listings-wrapper .content-wrapper {
+    flex-direction: column;
+  }
+
+  /* Map takes most of screen */
+  .listings-wrapper .map-section {
+    flex: 1;
+  }
+
+  /* Cards in bottom sheet (we'll add this in Phase 5) */
+  .listings-wrapper .cards-section {
+    flex: 0 0 40%;
   }
 }
