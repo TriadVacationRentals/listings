@@ -38,7 +38,7 @@
 /* Search bar at top */
 .listings-wrapper .search-section {
   background: none;
-  padding: 20px;
+  padding: 20px 7%; /* 7% horizontal padding */
   z-index: 1000;
   position: relative;
 }
@@ -51,6 +51,9 @@
   width: 100%;
   position: relative;
   z-index: 1;
+  padding: 0 7%; /* 7% horizontal padding */
+  padding-top: 20px; /* 20px spacing below line */
+  border-top: 1px solid #e5e7eb; /* Light grey line */
 }
 
 /* Cards on left */
@@ -69,6 +72,9 @@
   position: relative;
   background: #e0e0e0;
   width: 100%;
+  border-radius: 30px;
+  overflow: hidden; /* Clips map to border radius */
+  margin-left: 20px; /* Spacing between cards and map */
 }
 
 /* ============================================ */
@@ -307,6 +313,28 @@
 }
 
 /* ============================================ */
+/* HIDE MOBILE ELEMENTS ON DESKTOP */
+/* ============================================ */
+@media (min-width: 769px) {
+  .listings-wrapper .mobile-floating-buttons,
+  .listings-wrapper .view-toggle-bar,
+  .listings-wrapper .mobile-search-overlay,
+  .listings-wrapper .mobile-search-trigger,
+  .listings-wrapper .mobile-filter-trigger,
+  .listings-wrapper .calendar-wrapper-mobile,
+  .listings-wrapper .guest-popup-mobile {
+    display: none !important;
+  }
+  
+  /* Reset content wrapper padding on mobile (remove on desktop) */
+  .listings-wrapper .content-wrapper {
+    border-top: 1px solid #e5e7eb;
+    padding: 0 7%;
+    padding-top: 20px;
+  }
+}
+
+/* ============================================ */
 /* MOBILE RESPONSIVE */
 /* ============================================ */
 @media (max-width: 768px) {
@@ -320,6 +348,8 @@
     flex-direction: column;
     height: 100vh;
     position: relative;
+    padding: 0; /* Remove desktop padding */
+    border-top: none; /* Remove desktop line */
   }
   
   /* Cards section - on mobile, position absolutely over map */
@@ -415,6 +445,8 @@
     right: 0;
     bottom: 0;
     z-index: 1;
+    border-radius: 0; /* Remove desktop border radius */
+    margin-left: 0; /* Remove desktop margin */
   }
   
   /* Floating buttons on map - positioned below navbar */
