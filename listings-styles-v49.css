@@ -1,9 +1,9 @@
 /* ============================================ */
-/* LISTINGS PAGE - WEBFLOW INTEGRATION */
+/* RESET & VARIABLES */
 /* ============================================ */
-
-/* Core resets for listings container only */
 .listings-wrapper * {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
@@ -14,11 +14,19 @@
   --border: #d7dee6;
   --bg: #ffffff;
   --bg-card: #f5f5f5;
-  font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  color: var(--text);
 }
 
-/* Main container - works with Webflow layout */
+.listings-wrapper {
+  font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--text);
+  background: var(--bg-card);
+  margin: 0;
+  padding: 0;
+}
+
+/* ============================================ */
+/* MAIN LAYOUT */
+/* ============================================ */
 .listings-wrapper .listings-container {
   display: flex;
   flex-direction: column;
@@ -30,7 +38,7 @@
 /* Search bar at top */
 .listings-wrapper .search-section {
   background: none;
-  padding: 12px 7%; /* Reduced from 20px, added 7% horizontal */
+  padding: 12px 7%; /* Reduced from 20px to 12px */
   z-index: 1000;
   position: relative;
 }
@@ -43,7 +51,7 @@
   width: 100%;
   position: relative;
   z-index: 1;
-  padding: 0 7%; /* 7% horizontal padding */
+  padding: 0 7%; /* 7% horizontal padding only */
 }
 
 /* Fixed grey line at top of content */
@@ -59,17 +67,17 @@
   pointer-events: none;
 }
 
-/* Cards on left */
+/* Cards on left - no top padding */
 .listings-wrapper .cards-section {
   display: block;
   flex: 0 0 45%;
   overflow-y: auto;
-  padding: 12px 20px 20px 0; /* Reduced top padding */
+  padding: 12px 20px 20px 0; /* Reduced top from 20px to 12px */
   background: var(--bg-card);
   width: 100%;
 }
 
-/* Modern minimal scrollbar */
+/* Modern minimal scrollbar - no arrows */
 .listings-wrapper .cards-section::-webkit-scrollbar {
   width: 6px;
 }
@@ -87,25 +95,30 @@
   background: #9ca3af;
 }
 
+/* Remove scrollbar buttons/arrows */
 .listings-wrapper .cards-section::-webkit-scrollbar-button {
   display: none;
+  height: 0;
+  width: 0;
 }
 
+/* Firefox scrollbar - no arrows */
 .listings-wrapper .cards-section {
   scrollbar-width: thin;
   scrollbar-color: #d1d5db transparent;
+  overflow: -moz-scrollbars-none; /* Hide buttons in Firefox */
 }
 
-/* Map on right */
+/* Map on right - with top padding */
 .listings-wrapper .map-section {
   flex: 1;
   position: relative;
   background: #e0e0e0;
   width: 100%;
   border-radius: 30px;
-  overflow: hidden;
-  margin-left: 20px;
-  margin-top: 12px;
+  overflow: hidden; /* Clips map to border radius */
+  margin-left: 20px; /* Spacing between cards and map */
+  margin-top: 12px; /* Reduced from 20px to 12px */
 }
 
 /* ============================================ */
@@ -138,7 +151,7 @@
   z-index: auto;
 }
 
-.listings-wrapper .search-field.active {
+.search-field.active {
   z-index: 1001;
 }
 
@@ -165,7 +178,7 @@
   gap: 2px;
 }
 
-.search-label {
+.listings-wrapper .search-label {
   font-size: 11px;
   font-weight: 600;
   color: var(--text);
@@ -173,7 +186,7 @@
   line-height: 1;
 }
 
-.search-input {
+.listings-wrapper .search-input {
   width: 100%;
   border: none;
   background: none;
@@ -185,56 +198,22 @@
   line-height: 1.2;
 }
 
-.search-input::placeholder {
+.listings-wrapper .search-input::placeholder {
   color: var(--text-muted);
 }
 
-.search-btn {
-  background: #0F2C3A;
-  color: white;
-  border: none;
-  border-radius: 12px;
-  padding: 0 32px;
-  height: 43px;
-  margin: 10px 10px 10px 0;
-  font-size: 15px;
-  font-weight: 600;
-  font-family: inherit;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  white-space: nowrap;
-  flex-shrink: 0;
-  min-width: 130px;
-}
 
-.search-btn:hover {
+.listings-wrapper .search-btn:hover {
   background: #16A8EE;
 }
 
 /* Filter button */
-.filter-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: none;
-  border: none;
-  padding: 0;
-  margin-left: 8px;
-  margin-right: 16px;
-  cursor: pointer;
-  transition: transform 0.2s;
-  flex-shrink: 0;
-}
 
-.filter-btn:hover {
+.listings-wrapper .filter-btn:hover {
   transform: scale(1.1);
 }
 
-.filter-btn svg {
+.listings-wrapper .filter-btn svg {
   width: 24px;
   height: 24px;
   color: #0F2C3A;
@@ -246,7 +225,8 @@
 .listings-wrapper .cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px;
+  gap: 1.2vw; /* Responsive gap */
+  min-gap: 14px;
   transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -280,8 +260,8 @@
 }
 
 /* Hide mobile-only elements on desktop */
-.mobile-floating-buttons,
-.view-toggle-bar {
+.listings-wrapper .mobile-floating-buttons,
+.listings-wrapper .view-toggle-bar {
   display: none;
 }
 
@@ -290,91 +270,176 @@
   transform: translateY(-2px);
 }
 
-.property-type-badge {
+.listings-wrapper .property-type-badge {
   position: absolute;
-  top: 12px;
-  left: 12px;
+  top: 0.7vw;
+  left: 0.7vw;
   background: white;
-  border-radius: 8px;
-  padding: 8px 14px;
+  border-radius: 0.4vw;
+  padding: 0.3vw 0.6vw; /* Smaller */
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 14px;
+  gap: 0.3vw;
+  font-size: 0.5vw; /* Smaller - was 0.75vw */
   font-weight: 600;
   color: #0F2C3A;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 0.15vw 0.4vw rgba(0,0,0,0.12);
   z-index: 1;
+  min-font-size: 10px;
 }
 
-.property-type-badge svg {
-  width: 20px;
-  height: 20px;
+.listings-wrapper .property-type-badge svg {
+  width: 0.7vw; /* Smaller - was 1vw */
+  height: 0.7vw;
+  min-width: 13px;
+  min-height: 13px;
   flex-shrink: 0;
 }
 
 .listings-wrapper .card-image {
   width: 100%;
-  height: 240px;
+  height: 11vw; /* Scales with viewport width */
   object-fit: cover;
+  min-height: 140px; /* Don't go too small */
+  max-height: 200px; /* Don't go too large on big screens */
+}
+
+/* Limit image height on laptop screens */
+@media (max-width: 1600px) {
+  .listings-wrapper .card-image {
+    max-height: 130px; /* SHORTER - was 150px */
+  }
+}
+
+@media (max-width: 1400px) {
+  .listings-wrapper .card-image {
+    max-height: 115px; /* SHORTER - was 130px */
+  }
+}
+
+/* Reduce spacing on laptops */
+@media (max-width: 1600px) {
+  .listings-wrapper .card-content {
+    padding: 8px !important; /* Less padding - was 0.6vw */
+  }
+  
+  .listings-wrapper .card-location {
+    margin-bottom: 2px !important; /* Less space - was 0.3vw */
+    gap: 2px !important;
+  }
+  
+  .listings-wrapper .card-title {
+    margin: 3px 0 4px 0 !important; /* Less margin - was 0.3vw */
+  }
+  
+  .listings-wrapper .card-details {
+    margin-bottom: 5px !important; /* Less space - was 0.5vw */
+    gap: 2px !important; /* Tighter gaps - was 0.3vw */
+  }
+  
+  .listings-wrapper .card-price {
+    margin-top: 2px !important;
+  }
 }
 
 .listings-wrapper .card-content {
-  padding: 16px;
+  padding: 0.8vw;
+  min-padding: 10px;
 }
 
 .listings-wrapper .card-location {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 14px;
+  gap: 0.3vw;
+  font-size: 0.55vw; /* Smaller - was 0.8vw */
   color: var(--text);
-  margin-bottom: 4px;
+  margin-bottom: 0.3vw;
 }
 
 .listings-wrapper .card-location svg {
-  width: 16px;
-  height: 16px;
+  width: 0.65vw; /* Smaller - was 0.9vw */
+  height: 0.65vw;
+  min-width: 12px;
+  min-height: 12px;
 }
 
 .listings-wrapper .card-rating {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 0.2vw;
   margin-left: auto;
 }
 
 .listings-wrapper .card-rating svg {
-  width: 14px;
-  height: 14px;
+  width: 0.55vw; /* Smaller - was 0.8vw */
+  height: 0.55vw;
+  min-width: 11px;
+  min-height: 11px;
   color: #16A8EE;
 }
 
 .listings-wrapper .card-title {
-  font-size: 18px;
+  font-size: 0.7vw; /* ~18px on 2560px screen - was 1vw */
   font-weight: 600;
   color: var(--text);
-  margin: 8px 0;
+  margin: 0.3vw 0 0.4vw 0;
   line-height: 1.3;
+  min-font-size: 13px;
 }
 
 .listings-wrapper .card-details {
   display: flex;
-  gap: 6px;
-  font-size: 14px;
+  align-items: center;
+  gap: 0.3vw;
+  font-size: 0.5vw; /* Smaller - was 0.75vw */
   color: var(--text-muted);
-  margin-bottom: 12px;
+  margin-bottom: 0.5vw;
+}
+
+.listings-wrapper .card-details svg {
+  width: 0.55vw; /* Smaller - was 0.8vw */
+  height: 0.55vw;
+  min-width: 10px;
+  min-height: 10px;
+  color: #6b7280;
+  flex-shrink: 0;
 }
 
 .listings-wrapper .card-price {
-  font-size: 16px;
+  font-size: 0.6vw; /* Smaller - was 0.95vw */
   font-weight: 600;
   color: var(--text);
+  min-font-size: 13px;
 }
 
 .listings-wrapper .card-price span {
   font-weight: 400;
-  font-size: 14px;
+  font-size: 0.52vw; /* Smaller - was 0.8vw */
+  min-font-size: 11px;
+}
+
+/* ============================================ */
+/* HIDE MOBILE ELEMENTS ON DESKTOP */
+/* ============================================ */
+@media (min-width: 769px) {
+  .listings-wrapper .mobile-floating-buttons,
+  .listings-wrapper .view-toggle-bar,
+  .listings-wrapper .mobile-search-overlay,
+  .listings-wrapper .mobile-search-trigger,
+  .listings-wrapper .mobile-filter-trigger,
+  .listings-wrapper .calendar-wrapper-mobile,
+  .listings-wrapper .guest-popup-mobile {
+    display: none !important;
+  }
+  
+  /* Ensure content wrapper has horizontal padding only */
+  .listings-wrapper .content-wrapper {
+    padding: 0 7%;
+  }
+  
+  .listings-wrapper .content-wrapper::before {
+    display: block;
+  }
 }
 
 /* ============================================ */
@@ -391,6 +456,12 @@
     flex-direction: column;
     height: 100vh;
     position: relative;
+    padding: 0; /* Remove desktop padding */
+  }
+  
+  /* Hide the grey line on mobile */
+  .listings-wrapper .content-wrapper::before {
+    display: none;
   }
   
   /* Cards section - on mobile, position absolutely over map */
@@ -403,8 +474,8 @@
     background: white;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    padding: 20px !important; /* 20px all sides */
-    padding-top: 90px !important; /* Space for search button */
+    padding: 20px !important; /* 20px padding on all sides */
+    padding-top: 90px !important; /* Top space for search bar - scrolls away */
     padding-bottom: 90px !important; /* Space for toggle bar */
     display: none;
     z-index: 100;
@@ -412,20 +483,20 @@
   
   /* Mobile card styling - bigger text and spacing */
   .listings-wrapper .property-card {
-    margin-bottom: 20px;
+    margin-bottom: 20px; /* More space between cards */
   }
   
   .listings-wrapper .card-image {
-    height: 220px !important;
-    max-height: none !important;
+    height: 220px !important; /* Taller images on mobile */
+    max-height: none !important; /* Override laptop max-height */
   }
   
   .listings-wrapper .card-content {
-    padding: 14px !important;
+    padding: 14px !important; /* More padding */
   }
   
   .listings-wrapper .card-location {
-    font-size: 14px !important;
+    font-size: 14px !important; /* Bigger text */
     margin-bottom: 6px !important;
     gap: 4px !important;
   }
@@ -436,12 +507,12 @@
   }
   
   .listings-wrapper .card-title {
-    font-size: 18px !important;
+    font-size: 18px !important; /* Bigger title */
     margin: 8px 0 !important;
   }
   
   .listings-wrapper .card-details {
-    font-size: 14px !important;
+    font-size: 14px !important; /* Bigger icons text */
     gap: 6px !important;
     margin-bottom: 10px !important;
   }
@@ -452,7 +523,7 @@
   }
   
   .listings-wrapper .card-price {
-    font-size: 18px !important;
+    font-size: 18px !important; /* Bigger price */
   }
   
   .listings-wrapper .card-price span {
@@ -460,12 +531,12 @@
   }
   
   .listings-wrapper .property-type-badge {
-    top: 14px !important;
-    left: 14px !important;
+    top: 14px !important; /* More space from edges */
+    left: 14px !important; /* More space from edges */
     padding: 8px 12px !important;
     font-size: 13px !important;
     gap: 6px !important;
-    border-radius: 8px !important;
+    border-radius: 8px !important; /* Add border radius */
   }
   
   .listings-wrapper .property-type-badge svg {
@@ -480,18 +551,22 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 55px;
+    height: 130px; /* Cover navbar + search button */
     background: white;
     pointer-events: none;
     z-index: 10;
   }
   
-  .listings-wrapper .cards-section.list-view-active {
+  .cards-section.list-view-active {
     display: block;
   }
   
-  /* Hide map when list is active */
-  .listings-wrapper .map-section.list-view-active #listings-map {
+  /* Hide map when list is active and disable interaction */
+  .map-section.list-view-active {
+    pointer-events: none; /* Disable all map interaction when hidden */
+  }
+  
+  .map-section.list-view-active #listings-map {
     display: none;
   }
   
@@ -532,8 +607,8 @@
     grid-template-columns: 1fr;
     gap: 16px;
     padding: 16px;
-    padding-top: 100px;
-    padding-bottom: 84px;
+    padding-top: 150px; /* Below navbar + search button */
+    padding-bottom: 100px; /* Above toggle bar */
     background: white;
     min-height: 100%;
   }
@@ -551,20 +626,24 @@
     right: 0;
     bottom: 0;
     z-index: 1;
+    border-radius: 0; /* Remove desktop border radius */
+    margin-left: 0; /* Remove desktop margin */
+    margin-top: 0; /* Remove desktop top margin */
   }
   
-  /* Floating buttons on map */
-  .mobile-floating-buttons {
-    position: absolute;
-    top: 16px;
+  /* Floating buttons on map - positioned below navbar */
+  .listings-wrapper .mobile-floating-buttons {
+    position: fixed;
+    top: 76px; /* Adjust based on your Webflow navbar height - default is 76px */
     left: 16px;
     right: 16px;
     z-index: 1002;
     display: flex;
     gap: 8px;
+    pointer-events: none;
   }
   
-  .mobile-search-trigger {
+  .listings-wrapper .mobile-search-trigger {
     flex: 1;
     background: white;
     border: none;
@@ -579,9 +658,10 @@
     color: #6b7280;
     cursor: pointer;
     width: 100%;
+    pointer-events: auto;
   }
   
-  .mobile-search-trigger svg {
+  .listings-wrapper .mobile-search-trigger svg {
     width: 20px;
     height: 20px;
     color: #0F2C3A;
@@ -598,23 +678,9 @@
     color: #0F2C3A;
   }
   
-  /* Show List bar (full width at bottom) */
-  /* Mobile floating buttons */
-  .mobile-floating-buttons {
-    position: absolute;
-    top: 20px;
-    left: 0;
-    right: 0;
-    z-index: 1001;
-    display: flex !important;
-    justify-content: center;
-    padding: 0 20px;
-    gap: 12px;
-  }
-  
-  /* View toggle bar - mobile only */
-  .view-toggle-bar {
-    position: absolute;
+  /* View toggle bar - show on mobile */
+  .listings-wrapper .view-toggle-bar {
+    position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
@@ -623,33 +689,34 @@
     border-top: 1px solid #e5e7eb;
     border-radius: 30px 30px 0 0;
     padding: 16px 20px;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom));
     box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
     display: flex !important;
     align-items: center;
     justify-content: space-between;
   }
   
-  .view-toggle-text {
+  .listings-wrapper .view-toggle-text {
     font-family: inherit;
     font-size: 15px;
     font-weight: 600;
     color: #0F2C3A;
   }
   
-  .view-toggle-switch {
+  .listings-wrapper .view-toggle-switch {
     position: relative;
     display: inline-block;
     width: 50px;
     height: 28px;
   }
   
-  .view-toggle-switch input {
+  .listings-wrapper .view-toggle-switch input {
     opacity: 0;
     width: 0;
     height: 0;
   }
   
-  .view-toggle-slider {
+  .listings-wrapper .view-toggle-slider {
     position: absolute;
     cursor: pointer;
     top: 0;
@@ -661,7 +728,7 @@
     border-radius: 14px;
   }
   
-  .view-toggle-slider:before {
+  .listings-wrapper .view-toggle-slider:before {
     position: absolute;
     content: "";
     height: 22px;
@@ -671,391 +738,67 @@
     background-color: white;
     transition: 0.3s;
     border-radius: 50%;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
   }
   
-  .view-toggle-switch input:checked + .view-toggle-slider {
+  .listings-wrapper input:checked + .view-toggle-slider {
     background-color: #16A8EE;
   }
   
-  .view-toggle-switch input:checked + .view-toggle-slider:before {
+  .listings-wrapper input:checked + .view-toggle-slider:before {
     transform: translateX(22px);
   }
   
-  /* Search/Filter overlay - slides from bottom */
-  .mobile-search-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.5);
-    z-index: 2000;
-    opacity: 0;
-    pointer-events: none;
+  /* Mobile popup adjustments */
+  .leaflet-popup-content-wrapper {
+    max-width: 90vw !important;
   }
   
-  .mobile-search-overlay.active {
-    opacity: 1;
-    pointer-events: auto;
-  }
-  
-  .mobile-search-panel {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: white;
-    border-radius: 30px 30px 0 0;
-    max-height: 90vh;
-    display: flex;
-    flex-direction: column;
-    transform: translateY(100%);
-    transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
-  }
-  
-  .mobile-search-overlay.active .mobile-search-panel {
-    transform: translateY(0);
-  }
-  
-  .mobile-search-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px;
-    border-bottom: 1px solid #e5e7eb;
-    background: white;
-    flex-shrink: 0;
-    z-index: 100;
-    border-radius: 30px 30px 0 0;
-  }
-  
-  .mobile-search-title {
-    font-size: 18px;
-    font-weight: 600;
-  }
-  
-  .mobile-search-close {
-    background: none;
-    border: none;
-    font-size: 28px;
-    line-height: 1;
-    cursor: pointer;
-    padding: 0;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #0F2C3A;
-  }
-  
-  .mobile-search-content {
-    padding: 24px 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    overflow-y: auto;
-    flex: 1;
-    -webkit-overflow-scrolling: touch;
-  }
-  
-  .mobile-search-field-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .mobile-search-label {
-    font-size: 14px;
-    font-weight: 600;
-    color: #0F2C3A;
-  }
-  
-  .mobile-search-input {
-    background: #f5f5f5;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 16px;
-    font-size: 15px;
-    font-family: inherit;
-    min-height: 52px;
-  }
-  
-  .mobile-search-input:focus {
-    outline: none;
-    border-color: #16A8EE;
-  }
-  
-  /* Mobile search buttons - now inside scrollable content */
-  .mobile-search-clear {
-    padding: 14px 24px;
-    border: none;
-    background: transparent;
-    color: #0F2C3A;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    text-decoration: underline;
-  }
-  
-  .mobile-search-apply {
-    flex: 1;
-    padding: 16px;
-    border: none;
-    border-radius: 12px;
-    background: #0F2C3A;
-    color: white;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-  }
-  
-  /* Filter content inside overlay */
-  #mobile-filters-container #filter-dropdown {
-    position: relative !important;
-    top: auto !important;
-    left: auto !important;
-    right: auto !important;
-    bottom: auto !important;
-    width: 100% !important;
-    max-height: none !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-    display: block !important;
-    padding: 0 !important;
-  }
-  
-  /* Hide the desktop filter dropdown on mobile */
-  .listings-wrapper .search-bar #filter-dropdown {
-    display: none !important;
-  }
-  
-  /* Mobile calendar wrapper */
-  .calendar-wrapper-mobile {
-    display: none;
-    margin: 16px 0;
-  }
-  
-  .calendar-wrapper-mobile.active {
-    display: block;
-  }
-  
-  /* Mobile guest popup */
-  .guest-popup-mobile {
-    display: none;
-    background: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 16px 20px;
-    margin: 16px 0;
-  }
-  
-  .guest-popup-mobile.active {
-    display: block;
-  }
-  
-  .guest-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .guest-info {
-    flex: 1;
-  }
-  
-  .guest-title {
-    font-size: 14px;
-    font-weight: 600;
-    color: #0F2C3A;
-  }
-  
-  .guest-desc {
-    font-size: 12px;
-    color: #9ca3af;
-    margin-top: 2px;
-  }
-  
-  .guest-controls {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
-  
-  .guest-btn {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: 1.5px solid #d1d5db;
-    background: white;
-    color: #6b7280;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    transition: all 0.2s;
-  }
-  
-  .guest-btn:hover:not(:disabled) {
-    border-color: #0F2C3A;
-    color: #0F2C3A;
-  }
-  
-  .guest-btn:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-  }
-  
-  .guest-number {
-    font-size: 15px;
-    font-weight: 600;
-    color: #0F2C3A;
-    min-width: 24px;
-    text-align: center;
+  .leaflet-popup-content {
+    width: auto !important;
+    max-width: 320px !important;
   }
 }
-
-/* Desktop only */
-@media (min-width: 769px) {
-  .mobile-floating-buttons,
-  .show-list-btn,
-  .mobile-search-overlay,
-  .list-view-header {
-    display: none !important;
-  }
-}
-#listings-map {
-  width: 100%;
-  height: 100%;
-}
-
-/* Hide Leaflet attribution */
-.leaflet-control-attribution {
-  display: none;
-}
-
-/* Custom price markers (Airbnb style) */
-.custom-marker-wrapper {
-  background: transparent;
-  border: none;
-}
-
-.custom-marker {
-  background: white;
-  color: #0F2C3A;
-  padding: 6px 10px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 600;
-  white-space: nowrap;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  border: 1px solid rgba(0,0,0,0.08);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.custom-marker:hover {
+.listings-wrapper .search-btn {
   background: #0F2C3A;
   color: white;
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-  z-index: 1000;
-}
-
-/* Custom popup styling */
-.leaflet-popup-content-wrapper {
-  padding: 0;
-  border-radius: 16px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-  overflow: hidden;
-}
-
-.leaflet-popup-content {
-  margin: 0;
-  width: 280px !important;
-}
-
-.leaflet-popup-tip {
-  background: white;
-}
-
-/* Loading state */
-.listings-wrapper .loading-spinner {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-}
-
-.listings-wrapper .spinner {
-  width: 48px;
-  height: 48px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #0F2C3A;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.loading-text {
-  margin-top: 12px;
-  font-size: 14px;
-  color: var(--text-muted);
-}
-
-/* Empty state */
-.listings-wrapper .empty-state {
-  padding: 60px 20px;
-  text-align: center;
-}
-
-.listings-wrapper .empty-state h3 {
-  font-size: 24px;
+  border: none;
+  border-radius: 12px;
+  padding: 0 32px;
+  height: 43px;
+  margin: 10px 10px 10px 0;
+  font-size: 15px;
   font-weight: 600;
-  color: var(--text);
-  margin-bottom: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-width: 100px;
 }
 
-.listings-wrapper .empty-state p {
-  font-size: 16px;
-  color: var(--text-muted);
-  line-height: 1.5;
+.listings-wrapper .search-btn:hover {
+  background: #16A8EE;
 }
 
-/* ============================================ */
-/* RESPONSIVE - MOBILE */
-/* ============================================ */
-@media (max-width: 768px) {
-  /* Hide desktop search on mobile */
-  .listings-wrapper .search-section {
-    display: none;
-  }
-
-  /* Stack content vertically on mobile */
-  .listings-wrapper .content-wrapper {
-    flex-direction: column;
-  }
-
-  /* Map takes most of screen */
-  .listings-wrapper .map-section {
-    flex: 1;
-  }
-
-  /* Cards in bottom sheet (we'll add this in Phase 5) */
-  .listings-wrapper .cards-section {
-    flex: 0 0 40%;
-  }
+.listings-wrapper .filter-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: 0;
+  margin-left: 8px;
+  margin-right: 16px;
+  cursor: pointer;
+  transition: transform 0.2s;
+  flex-shrink: 0;
 }
 
 /* ============================================ */
-/* MAP DISPLAY & MARKER FIXES */
+/* MAP DISPLAY FIX */
 /* ============================================ */
 #listings-map {
   width: 100%;
@@ -1068,7 +811,11 @@
   height: 100%;
 }
 
-/* Custom price markers - white rounded rectangles */
+/* ============================================ */
+/* CUSTOM MAP MARKERS & POPUPS */
+/* ============================================ */
+
+/* Price markers - white rounded rectangles */
 .custom-marker-wrapper {
   background: none !important;
   border: none !important;
@@ -1095,7 +842,7 @@
   box-shadow: 0 4px 12px rgba(0,0,0,0.25);
 }
 
-/* Clean Leaflet popup - remove weird arrow */
+/* Remove Leaflet's default popup styling */
 .leaflet-popup-content-wrapper {
   padding: 0 !important;
   border-radius: 16px !important;
@@ -1108,29 +855,21 @@
   width: 280px !important;
 }
 
+/* Remove the weird pointy arrow/tip */
 .leaflet-popup-tip-container {
   display: none !important;
 }
 
+/* Clean close button */
 .leaflet-popup-close-button {
   color: #0F2C3A !important;
   font-size: 24px !important;
   font-weight: 300 !important;
   padding: 8px 12px !important;
+  right: 4px !important;
+  top: 4px !important;
 }
 
 .leaflet-popup-close-button:hover {
   color: #16A8EE !important;
-}
-
-/* Mobile popup sizing */
-@media (max-width: 768px) {
-  .leaflet-popup-content-wrapper {
-    max-width: 90vw !important;
-  }
-  
-  .leaflet-popup-content {
-    width: auto !important;
-    max-width: 320px !important;
-  }
 }
