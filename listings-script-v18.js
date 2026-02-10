@@ -1741,14 +1741,38 @@
       
       // View toggle - ON = map visible, OFF = list visible
       if (viewToggleCheckbox) {
+        let savedMapBounds = null;
+        
         viewToggleCheckbox.addEventListener('change', () => {
           if (viewToggleCheckbox.checked) {
             // Toggle ON = Map visible
             mapSection.classList.remove('list-view-active');
             cardsSection.classList.remove('list-view-active');
+            
+            // Restore map bounds if saved
+            if (mapInstance && savedMapBounds) {
+              setTimeout(() => {
+                try {
+                  mapInstance.fitBounds(savedMapBounds, { padding: 50, duration: 0 });
+                  mapInstance.resize(); // Force map to recalculate size
+                } catch (error) {
+                  console.warn('Could not restore map bounds:', error);
+                }
+              }, 100);
+            }
+            
             console.log('🗺️ Map visible');
           } else {
             // Toggle OFF = List visible
+            // Save current map bounds before hiding
+            if (mapInstance) {
+              try {
+                savedMapBounds = mapInstance.getBounds();
+              } catch (error) {
+                console.warn('Could not save map bounds:', error);
+              }
+            }
+            
             mapSection.classList.add('list-view-active');
             cardsSection.classList.add('list-view-active');
             
