@@ -244,11 +244,11 @@
   left: 0.7vw;
   background: white;
   border-radius: 0.4vw;
-  padding: 0.35vw 0.7vw;
+  padding: 0.3vw 0.6vw; /* Smaller */
   display: flex;
   align-items: center;
-  gap: 0.35vw;
-  font-size: 0.75vw;
+  gap: 0.3vw;
+  font-size: 0.5vw; /* Smaller - was 0.75vw */
   font-weight: 600;
   color: #0F2C3A;
   box-shadow: 0 0.15vw 0.4vw rgba(0,0,0,0.12);
@@ -257,8 +257,8 @@
 }
 
 .listings-wrapper .property-type-badge svg {
-  width: 1vw;
-  height: 1vw;
+  width: 0.7vw; /* Smaller - was 1vw */
+  height: 0.7vw;
   min-width: 13px;
   min-height: 13px;
   flex-shrink: 0;
@@ -281,14 +281,14 @@
   display: flex;
   align-items: center;
   gap: 0.3vw;
-  font-size: 0.8vw;
+  font-size: 0.55vw; /* Smaller - was 0.8vw */
   color: var(--text);
   margin-bottom: 0.3vw;
 }
 
 .listings-wrapper .card-location svg {
-  width: 0.9vw;
-  height: 0.9vw;
+  width: 0.65vw; /* Smaller - was 0.9vw */
+  height: 0.65vw;
   min-width: 12px;
   min-height: 12px;
 }
@@ -301,15 +301,15 @@
 }
 
 .listings-wrapper .card-rating svg {
-  width: 0.8vw;
-  height: 0.8vw;
+  width: 0.55vw; /* Smaller - was 0.8vw */
+  height: 0.55vw;
   min-width: 11px;
   min-height: 11px;
   color: #16A8EE;
 }
 
 .listings-wrapper .card-title {
-  font-size: 1vw; /* Scales proportionally */
+  font-size: 0.7vw; /* ~18px on 2560px screen - was 1vw */
   font-weight: 600;
   color: var(--text);
   margin: 0.3vw 0 0.4vw 0;
@@ -321,14 +321,14 @@
   display: flex;
   align-items: center;
   gap: 0.3vw;
-  font-size: 0.75vw;
+  font-size: 0.5vw; /* Smaller - was 0.75vw */
   color: var(--text-muted);
   margin-bottom: 0.5vw;
 }
 
 .listings-wrapper .card-details svg {
-  width: 0.8vw;
-  height: 0.8vw;
+  width: 0.55vw; /* Smaller - was 0.8vw */
+  height: 0.55vw;
   min-width: 10px;
   min-height: 10px;
   color: #6b7280;
@@ -336,7 +336,7 @@
 }
 
 .listings-wrapper .card-price {
-  font-size: 0.95vw;
+  font-size: 0.6vw; /* Smaller - was 0.95vw */
   font-weight: 600;
   color: var(--text);
   min-font-size: 13px;
@@ -344,7 +344,7 @@
 
 .listings-wrapper .card-price span {
   font-weight: 400;
-  font-size: 0.8vw;
+  font-size: 0.52vw; /* Smaller - was 0.8vw */
   min-font-size: 11px;
 }
 
