@@ -8,6 +8,7 @@
     let allProperties = [];
     let mapInstance = null;
     let mapMarkers = [];
+    let markerClusterGroup = null; // Global cluster group
     let isInitialLoad = true; // Track if this is the first load
     
     // Initialize
@@ -242,21 +243,47 @@
       // Initialize map with max bounds
       mapInstance = L.map('listings-map', {
         zoomControl: false,
+        attributionControl: false, // Remove attribution text
         maxBounds: maxBounds, // Can't pan outside this
         maxBoundsViscosity: 1.0 // Hard boundary (can't drag outside at all)
       }).setView([avgLat, avgLng], 6);
       
       // Add tile layer (using CartoDB Voyager - clean, Airbnb-style)
       L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; CARTO, OpenStreetMap',
         maxZoom: 14, // Limit zoom - can see neighborhood but not exact building
         minZoom: 4 // Can't zoom out too far
       }).addTo(mapInstance);
       
-      // Add markers for each property
-      validProperties.forEach(property => {
-        addPropertyMarker(property);
+      // Initialize marker cluster group
+      markerClusterGroup = L.markerClusterGroup({
+        maxClusterRadius: 60, // Smaller radius for tighter clusters
+        spiderfyOnMaxZoom: true,
+        showCoverageOnHover: false,
+        zoomToBoundsOnClick: true,
+        iconCreateFunction: function(cluster) {
+          const count = cluster.getChildCount();
+          let size = 'small';
+          if (count > 20) size = 'large';
+          else if (count > 10) size = 'medium';
+          
+          return L.divIcon({
+            html: `<div class="marker-cluster marker-cluster-${size}">${count}</div>`,
+            className: 'marker-cluster-container',
+            iconSize: L.point(40, 40)
+          });
+        }
       });
+      
+      // Add markers for each property to cluster group
+      validProperties.forEach(property => {
+        const marker = createPropertyMarker(property);
+        if (marker) {
+          markerClusterGroup.addLayer(marker);
+        }
+      });
+      
+      // Add cluster group to map
+      mapInstance.addLayer(markerClusterGroup);
       
       // Fit map to show all markers
       if (mapMarkers.length > 0) {
@@ -402,14 +429,6 @@
     
     function updateMarkerVisibility(visibleProperties) {
       const visibleIds = new Set(visibleProperties.map(p => p.listingId));
-      const existingMarkerIds = new Set(mapMarkers.map(m => m.options.listingId));
-      
-      // Create markers for NEW properties that don't have markers yet
-      visibleProperties.forEach(property => {
-        if (!existingMarkerIds.has(property.listingId)) {
-          addPropertyMarker(property);
-        }
-      });
       
       // Show/hide existing markers
       mapMarkers.forEach(marker => {
@@ -427,11 +446,11 @@
       console.log(`👁️ Showing ${visibleIds.size} markers, hiding ${mapMarkers.length - visibleIds.size}`);
     }
     
-    function addPropertyMarker(property) {
+    function createPropertyMarker(property) {
       const lat = parseFloat(property.latitude);
       const lng = parseFloat(property.longitude);
       
-      if (isNaN(lat) || isNaN(lng)) return;
+      if (isNaN(lat) || isNaN(lng)) return null;
       
       // Create price marker (Airbnb style) - show price range
       const priceText = (property.priceMin && property.priceMax && property.priceMin !== property.priceMax) 
@@ -470,7 +489,6 @@
         icon: markerIcon,
         listingId: property.listingId
       })
-      .addTo(mapInstance)
       .bindPopup(popupContent, {
         maxWidth: 280,
         minWidth: 280,
@@ -478,22 +496,24 @@
       });
       
       mapMarkers.push(marker);
+      return marker;
     }
     
     // Update map markers based on filtered properties
     function updateMapMarkers(filteredProperties) {
-      if (!mapInstance) return;
+      if (!mapInstance || !markerClusterGroup) return;
       
-      // Remove all existing markers
-      mapMarkers.forEach(marker => {
-        mapInstance.removeLayer(marker);
-      });
+      // Clear cluster group
+      markerClusterGroup.clearLayers();
       mapMarkers = [];
       
       // Add markers only for filtered properties
       const validProperties = filteredProperties.filter(p => p.latitude && p.longitude);
       validProperties.forEach(property => {
-        addPropertyMarker(property);
+        const marker = createPropertyMarker(property);
+        if (marker) {
+          markerClusterGroup.addLayer(marker);
+        }
       });
       
       console.log(`🗺️ Updated map: showing ${mapMarkers.length} markers`);
