@@ -960,7 +960,40 @@
     width: auto !important;
     max-width: 320px !important;
   }
-}
+  /* Mobile popup adjustments */
+  .leaflet-popup-content-wrapper {
+    max-width: 90vw !important;
+  }
+
+  .leaflet-popup-content {
+    width: auto !important;
+    max-width: 320px !important;
+  }
+  
+  /* Map loading skeleton on mobile */
+  .map-section .map-loading-skeleton {
+    position: fixed;
+    top: 139px; /* Below navbar */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+  }
+  
+  .map-section .map-loading-spinner {
+    width: 60px;
+    height: 60px;
+    border: 5px solid #e5e7eb;
+    border-top: 5px solid #16A8EE;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+}  /* <--- Closing bracket for @media (max-width: 768px) */
+
 .listings-wrapper .search-btn {
   background: #0F2C3A;
   color: white;
