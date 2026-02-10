@@ -810,8 +810,10 @@
   }
   
   .mobile-search-field-group {
-    margin-bottom: 20px;
-  }
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column; /* Stack label and input vertically */
+}
   
   /* Mobile calendar wrapper - hidden by default */
   #mobile-calendar-wrapper {
