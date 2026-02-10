@@ -779,10 +779,8 @@
         box-shadow: 0 4px 20px rgba(0,0,0,0.15);
         padding: 20px;
         z-index: 2100;
-        width: 340px;
+        width: 320px;
         max-width: 90vw;
-        box-sizing: border-box;
-        overflow: hidden;
       ` : `
         position: absolute;
         top: calc(100% + 8px);
@@ -790,11 +788,9 @@
         background: white;
         border-radius: 16px;
         box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-        padding: 20px 30px;
+        padding: 20px;
         z-index: 1000;
-        width: 360px;
-        box-sizing: border-box;
-        overflow: hidden;
+        width: 320px;
       `;
       
       const month = type === 'checkin' ? currentCheckinMonth : currentCheckoutMonth;
@@ -805,10 +801,10 @@
           <div style="font-size: 16px; font-weight: 600;">${month.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</div>
           <button class="calendar-nav" data-action="next" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid #e5e7eb; background: white; cursor: pointer; font-size: 18px;">›</button>
         </div>
-        <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 8px; text-align: center; font-size: 11px; font-weight: 600; color: #9ca3af; width: 260px; margin-left: auto; margin-right: auto;">
+        <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin-bottom: 8px; text-align: center; font-size: 11px; font-weight: 600; color: #9ca3af;">
           <div>Su</div><div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div>
         </div>
-        <div id="${type}-days" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; min-height: 240px; width: 260px; margin-left: auto; margin-right: auto;"></div>
+        <div id="${type}-days" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px;"></div>
       `;
       
       document.getElementById(`${type}-field`).appendChild(popup);
@@ -2194,7 +2190,7 @@
       
       // Build calendar HTML
       let calendarHTML = `
-        <div style="padding: 20px; background: white; border-radius: 12px; border: 1px solid #e5e7eb; max-width: 380px; max-height: 70vh; overflow-y: auto; margin: 0 auto;">
+        <div style="padding: 20px; background: white; border-radius: 12px; border: 1px solid #e5e7eb; max-width: 340px; max-height: 70vh; overflow-y: auto; margin: 0 auto;">
           <div style="text-align: center; margin-bottom: 16px; font-size: 14px; font-weight: 600; color: #16A8EE;">
             ${checkinDate && !checkoutDate ? 'Select check-out date' : 'Select check-in date'}
           </div>
@@ -2205,14 +2201,14 @@
           </div>
           
           <!-- Weekdays -->
-          <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 8px; width: 260px; margin-left: auto; margin-right: auto;">
+          <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin-bottom: 8px; text-align: center;">
             ${['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(d => 
-              `<div style="text-align: center; font-size: 11px; font-weight: 600; color: #9ca3af; padding: 6px 0;">${d}</div>`
+              `<div style="font-size: 11px; font-weight: 600; color: #9ca3af; padding: 6px 0;">${d}</div>`
             ).join('')}
           </div>
           
           <!-- Days -->
-          <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; width: 260px; margin-left: auto; margin-right: auto;">
+          <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px;">
       `;
       
       // Empty cells before first day
