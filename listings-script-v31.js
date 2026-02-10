@@ -1844,13 +1844,22 @@
       }
       
       // Search trigger button - opens overlay
-      if (searchTrigger) {
+      if (searchTrigger && overlay) {
+        // Create mobile overlay content structure if it doesn't exist
+        let overlayContent = overlay.querySelector('.mobile-overlay-content');
+        if (overlayContent && overlayContent.children.length === 0) {
+          overlayContent.innerHTML = `
+            <div id="mobile-filters-container" style="display: flex; flex-direction: column; gap: 20px;">
+              <!-- Filters will be cloned here -->
+            </div>
+          `;
+        }
+        
         searchTrigger.addEventListener('click', (e) => {
           e.preventDefault();
           e.stopPropagation();
           console.log('📱 Mobile search trigger clicked');
           overlay.classList.add('active');
-          syncOverlayFields();
           moveFiltersToOverlay();
         });
       }
