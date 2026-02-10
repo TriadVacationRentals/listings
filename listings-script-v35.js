@@ -2342,23 +2342,44 @@
     
     function moveFiltersToOverlay() {
       const container = document.getElementById('mobile-filters-container');
-      const filterDropdown = document.getElementById('filter-dropdown');
+      let filterDropdown = document.getElementById('filter-dropdown');
       
       console.log('📱 moveFiltersToOverlay called');
       console.log('📱 Container:', container);
       console.log('📱 Filter dropdown:', filterDropdown);
       
+      // If filter dropdown doesn't exist, trigger its creation
+      if (!filterDropdown) {
+        console.log('📱 Filter dropdown not found, creating it...');
+        const filterBtn = document.getElementById('filter-btn');
+        if (filterBtn) {
+          filterBtn.click(); // This creates the dropdown
+          setTimeout(() => {
+            filterBtn.click(); // Close it again
+          }, 10);
+          filterDropdown = document.getElementById('filter-dropdown');
+        }
+      }
+      
       if (container && filterDropdown && window.innerWidth <= 768) {
+        // Make dropdown visible temporarily for cloning
+        const originalDisplay = filterDropdown.style.display;
+        filterDropdown.style.display = 'block';
+        
         // Only clone if not already cloned
         if (container.children.length === 0) {
           console.log('📱 Cloning filter dropdown to mobile...');
           const clone = filterDropdown.cloneNode(true);
           clone.style.display = 'block';
+          clone.style.position = 'relative';
+          clone.style.width = '100%';
+          clone.style.boxShadow = 'none';
+          clone.style.padding = '0';
           clone.id = 'mobile-filter-dropdown';
           
           console.log('📱 Clone created:', clone);
           
-          // Remove the action buttons from clone
+          // Remove the action buttons from clone (Clear/Apply are in overlay footer)
           const clonedActions = clone.querySelector('div[style*="display: flex; gap: 12px"]');
           if (clonedActions && clonedActions.querySelector('#clear-filters')) {
             clonedActions.remove();
@@ -2373,6 +2394,9 @@
         } else {
           console.log('📱 Filters already cloned, skipping');
         }
+        
+        // Restore original display
+        filterDropdown.style.display = originalDisplay;
       } else {
         console.log('📱 Cannot clone filters:');
         console.log('  - Container exists:', !!container);
