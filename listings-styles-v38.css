@@ -320,20 +320,25 @@
 /* Reduce spacing on laptops */
 @media (max-width: 1600px) {
   .listings-wrapper .card-content {
-    padding: 0.6vw; /* Less padding */
+    padding: 8px !important; /* Less padding - was 0.6vw */
   }
   
   .listings-wrapper .card-location {
-    margin-bottom: 0.2vw; /* Less space */
+    margin-bottom: 2px !important; /* Less space - was 0.3vw */
+    gap: 2px !important;
   }
   
   .listings-wrapper .card-title {
-    margin: 0.2vw 0 0.3vw 0; /* Less margin */
+    margin: 3px 0 4px 0 !important; /* Less margin - was 0.3vw */
   }
   
   .listings-wrapper .card-details {
-    margin-bottom: 0.3vw; /* Less space */
-    gap: 0.2vw; /* Tighter gaps */
+    margin-bottom: 5px !important; /* Less space - was 0.5vw */
+    gap: 2px !important; /* Tighter gaps - was 0.3vw */
+  }
+  
+  .listings-wrapper .card-price {
+    margin-top: 2px !important;
   }
 }
 
