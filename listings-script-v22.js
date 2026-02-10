@@ -8,6 +8,7 @@
     let allProperties = [];
     let mapInstance = null;
     let mapMarkers = [];
+    let isInitialLoad = true; // Track if this is the first load
     
     // Initialize
     async function init() {
@@ -274,6 +275,13 @@
     
     function updateCardsFromMapBounds() {
       if (!mapInstance) return;
+      
+      // On initial load, don't filter by viewport - show all properties
+      if (isInitialLoad) {
+        isInitialLoad = false;
+        console.log('📍 Initial load - showing all properties');
+        return; // Properties already rendered in init()
+      }
       
       const bounds = mapInstance.getBounds();
       const center = mapInstance.getCenter();
@@ -1738,6 +1746,13 @@
       const clearBtn = document.getElementById('mobile-clear-all');
       
       if (!mapSection || !cardsSection) return;
+      
+      // DEFAULT STATE: Show map by default on mobile
+      // If toggle exists, it will be checked (map visible)
+      // If toggle doesn't exist, map is still visible by default
+      if (viewToggleCheckbox) {
+        viewToggleCheckbox.checked = true; // Map visible by default
+      }
       
       // View toggle - ON = map visible, OFF = list visible
       if (viewToggleCheckbox) {
