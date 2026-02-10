@@ -2031,6 +2031,9 @@
         });
       }
       
+      // Initialize guest display
+      updateMobileGuestDisplay();
+      
       // Watch for changes in desktop fields and sync
       setInterval(syncOverlayFields, 500);
     }
