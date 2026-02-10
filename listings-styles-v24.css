@@ -30,7 +30,7 @@
 .listings-wrapper .listings-container {
   display: flex;
   flex-direction: column;
-  height: 600px; /* Fixed height - adjust this value as needed */
+  height: calc(100vh - 150px);
   width: 100%;
   margin: 0;
 }
