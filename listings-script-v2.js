@@ -254,36 +254,49 @@
         minZoom: 4 // Can't zoom out too far
       }).addTo(mapInstance);
       
-      // Initialize marker cluster group
-      markerClusterGroup = L.markerClusterGroup({
-        maxClusterRadius: 60, // Smaller radius for tighter clusters
-        spiderfyOnMaxZoom: true,
-        showCoverageOnHover: false,
-        zoomToBoundsOnClick: true,
-        iconCreateFunction: function(cluster) {
-          const count = cluster.getChildCount();
-          let size = 'small';
-          if (count > 20) size = 'large';
-          else if (count > 10) size = 'medium';
-          
-          return L.divIcon({
-            html: `<div class="marker-cluster marker-cluster-${size}">${count}</div>`,
-            className: 'marker-cluster-container',
-            iconSize: L.point(40, 40)
-          });
-        }
-      });
-      
-      // Add markers for each property to cluster group
-      validProperties.forEach(property => {
-        const marker = createPropertyMarker(property);
-        if (marker) {
-          markerClusterGroup.addLayer(marker);
-        }
-      });
-      
-      // Add cluster group to map
-      mapInstance.addLayer(markerClusterGroup);
+      // Check if MarkerCluster is available
+      if (typeof L.markerClusterGroup === 'function') {
+        // Initialize marker cluster group
+        markerClusterGroup = L.markerClusterGroup({
+          maxClusterRadius: 60, // Smaller radius for tighter clusters
+          spiderfyOnMaxZoom: true,
+          showCoverageOnHover: false,
+          zoomToBoundsOnClick: true,
+          iconCreateFunction: function(cluster) {
+            const count = cluster.getChildCount();
+            let size = 'small';
+            if (count > 20) size = 'large';
+            else if (count > 10) size = 'medium';
+            
+            return L.divIcon({
+              html: `<div class="marker-cluster marker-cluster-${size}">${count}</div>`,
+              className: 'marker-cluster-container',
+              iconSize: L.point(40, 40)
+            });
+          }
+        });
+        
+        // Add markers for each property to cluster group
+        validProperties.forEach(property => {
+          const marker = createPropertyMarker(property);
+          if (marker) {
+            markerClusterGroup.addLayer(marker);
+          }
+        });
+        
+        // Add cluster group to map
+        mapInstance.addLayer(markerClusterGroup);
+        console.log('✅ Using marker clustering');
+      } else {
+        // Fallback: Add markers directly without clustering
+        console.warn('⚠️ MarkerCluster not available, adding markers directly');
+        validProperties.forEach(property => {
+          const marker = createPropertyMarker(property);
+          if (marker) {
+            marker.addTo(mapInstance);
+          }
+        });
+      }
       
       // Fit map to show all markers
       if (mapMarkers.length > 0) {
