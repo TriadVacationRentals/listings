@@ -77,7 +77,7 @@
   width: 100%;
 }
 
-/* Modern minimal scrollbar */
+/* Modern minimal scrollbar - no arrows */
 .listings-wrapper .cards-section::-webkit-scrollbar {
   width: 6px;
 }
@@ -95,10 +95,18 @@
   background: #9ca3af;
 }
 
-/* Firefox scrollbar */
+/* Remove scrollbar buttons/arrows */
+.listings-wrapper .cards-section::-webkit-scrollbar-button {
+  display: none;
+  height: 0;
+  width: 0;
+}
+
+/* Firefox scrollbar - no arrows */
 .listings-wrapper .cards-section {
   scrollbar-width: thin;
   scrollbar-color: #d1d5db transparent;
+  overflow: -moz-scrollbars-none; /* Hide buttons in Firefox */
 }
 
 /* Map on right - with top padding */
@@ -299,13 +307,33 @@
 /* Limit image height on laptop screens */
 @media (max-width: 1600px) {
   .listings-wrapper .card-image {
-    max-height: 150px; /* Shorter on laptops */
+    max-height: 130px; /* SHORTER - was 150px */
   }
 }
 
 @media (max-width: 1400px) {
   .listings-wrapper .card-image {
-    max-height: 130px; /* Even shorter on smaller laptops */
+    max-height: 115px; /* SHORTER - was 130px */
+  }
+}
+
+/* Reduce spacing on laptops */
+@media (max-width: 1600px) {
+  .listings-wrapper .card-content {
+    padding: 0.6vw; /* Less padding */
+  }
+  
+  .listings-wrapper .card-location {
+    margin-bottom: 0.2vw; /* Less space */
+  }
+  
+  .listings-wrapper .card-title {
+    margin: 0.2vw 0 0.3vw 0; /* Less margin */
+  }
+  
+  .listings-wrapper .card-details {
+    margin-bottom: 0.3vw; /* Less space */
+    gap: 0.2vw; /* Tighter gaps */
   }
 }
 
