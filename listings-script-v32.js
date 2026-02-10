@@ -41,30 +41,43 @@
     async function fetchAllProperties() {
       console.log('📡 Fetching properties from Worker...');
       
-      const response = await fetch(`${WORKER_URL}/api/webflow/properties`);
-      
-      if (!response.ok) {
-        throw new Error(`API returned ${response.status}`);
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+        
+        const response = await fetch(`${WORKER_URL}/api/webflow/properties`, {
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (!response.ok) {
+          throw new Error(`API returned ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        console.log('📦 Total properties from API:', data.properties?.length);
+        
+        // Filter: only show properties that are live, booking active, and have pricing
+        allProperties = (data.properties || []).filter(property => {
+          return property.isLive && 
+                 property.bookingActive && 
+                 (property.priceMin > 0 || property.priceMax > 0);
+        });
+        
+        // Debug: Log first property to verify images
+        if (allProperties.length > 0) {
+          console.log('📸 First property:', allProperties[0].name);
+          console.log('📸 Image URL:', allProperties[0].featuredImage);
+        }
+        
+        console.log(`✅ Fetched ${allProperties.length} live properties with booking active`);
+      } catch (error) {
+        console.error('❌ Fetch error:', error);
+        console.error('Worker URL:', WORKER_URL);
+        throw error;
       }
-      
-      const data = await response.json();
-      
-      console.log('📦 Total properties from API:', data.properties?.length);
-      
-      // Filter: only show properties that are live, booking active, and have pricing
-      allProperties = (data.properties || []).filter(property => {
-        return property.isLive && 
-               property.bookingActive && 
-               (property.priceMin > 0 || property.priceMax > 0);
-      });
-      
-      // Debug: Log first property to verify images
-      if (allProperties.length > 0) {
-        console.log('📸 First property:', allProperties[0].name);
-        console.log('📸 Image URL:', allProperties[0].featuredImage);
-      }
-      
-      console.log(`✅ Fetched ${allProperties.length} live properties with booking active`);
       
       // Debug: Group properties by state
       const byState = {};
