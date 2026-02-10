@@ -543,7 +543,6 @@
     width: 18px !important;
     height: 18px !important;
   }
-}
   
   /* Solid white at top so cards scroll behind search bar cleanly */
   .listings-wrapper .cards-section::before {
@@ -618,6 +617,7 @@
   .bottom-sheet-handle {
     display: none;
   }
+}
   
   /* Map section: full screen */
   .listings-wrapper .map-section {
