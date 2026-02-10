@@ -832,13 +832,20 @@
   }
   
   .mobile-search-input {
-    width: 100%;
-    padding: 14px 16px;
-    border: 1px solid #d1d5db;
-    border-radius: 12px;
-    font-size: 16px; /* 16px minimum for iOS to prevent zoom */
-    font-family: inherit;
-  }
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  font-size: 16px; /* 16px minimum for iOS to prevent zoom */
+  font-family: inherit;
+  text-align: left; /* Make sure text aligns left */
+}
+
+/* Ensure placeholder and value have same styling */
+.mobile-search-input::placeholder {
+  color: #9ca3af;
+  opacity: 1;
+}
   
   /* Force all inputs in mobile overlay to be 16px to prevent iOS zoom */
   .mobile-search-overlay input,
