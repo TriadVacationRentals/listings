@@ -753,6 +753,7 @@
     }
     
     function showDatePicker(type) {
+      console.log('📅 showDatePicker called - Calendar grid width should be 260px');
       hideDatePickers();
       
       // Add active class to field (desktop only - mobile doesn't have these)
