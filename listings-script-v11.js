@@ -789,7 +789,7 @@
         box-shadow: 0 4px 20px rgba(0,0,0,0.15);
         padding: 20px 30px;
         z-index: 1000;
-        width: 380px;
+        width: 360px;
       `;
       
       const month = type === 'checkin' ? currentCheckinMonth : currentCheckoutMonth;
@@ -800,10 +800,10 @@
           <div style="font-size: 16px; font-weight: 600;">${month.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</div>
           <button class="calendar-nav" data-action="next" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid #e5e7eb; background: white; cursor: pointer; font-size: 18px;">›</button>
         </div>
-        <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 8px; text-align: center; font-size: 11px; font-weight: 600; color: #9ca3af; width: 280px;">
+        <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 8px; text-align: center; font-size: 11px; font-weight: 600; color: #9ca3af; width: 260px;">
           <div>Su</div><div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div>
         </div>
-        <div id="${type}-days" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; min-height: 240px; width: 280px;"></div>
+        <div id="${type}-days" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; min-height: 240px; width: 260px;"></div>
       `;
       
       document.getElementById(`${type}-field`).appendChild(popup);
@@ -2200,14 +2200,14 @@
           </div>
           
           <!-- Weekdays -->
-          <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 8px; width: 280px; margin-left: auto; margin-right: auto;">
+          <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 8px; width: 260px; margin-left: auto; margin-right: auto;">
             ${['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(d => 
               `<div style="text-align: center; font-size: 11px; font-weight: 600; color: #9ca3af; padding: 6px 0;">${d}</div>`
             ).join('')}
           </div>
           
           <!-- Days -->
-          <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; width: 280px; margin-left: auto; margin-right: auto;">
+          <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; width: 260px; margin-left: auto; margin-right: auto;">
       `;
       
       // Empty cells before first day
