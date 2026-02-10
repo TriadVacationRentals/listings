@@ -787,7 +787,7 @@
         background: white;
         border-radius: 16px;
         box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-        padding: 20px;
+        padding: 20px 30px;
         z-index: 1000;
         width: 340px;
       `;
@@ -2131,7 +2131,7 @@
         calWrapper.classList.remove('active');
         dateFieldGroups.forEach(group => {
           if (group.querySelector('#mobile-checkin-input') || group.querySelector('#mobile-checkout-input')) {
-            group.style.display = 'flex';
+            group.style.display = 'block';
           }
         });
       } else {
@@ -2189,7 +2189,7 @@
       
       // Build calendar HTML
       let calendarHTML = `
-        <div style="padding: 20px; background: white; border-radius: 12px; border: 1px solid #e5e7eb; max-width: 380px; margin: 0 auto;">
+        <div style="padding: 20px; background: white; border-radius: 12px; border: 1px solid #e5e7eb; max-width: 380px; max-height: 70vh; overflow-y: auto; margin: 0 auto;">
           <div style="text-align: center; margin-bottom: 16px; font-size: 14px; font-weight: 600; color: #16A8EE;">
             ${checkinDate && !checkoutDate ? 'Select check-out date' : 'Select check-in date'}
           </div>
