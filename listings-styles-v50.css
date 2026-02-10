@@ -551,7 +551,7 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 130px; /* Cover navbar + search button */
+    height: 103px; /* Cover to middle of search button (76px navbar + 27px half of button) */
     background: white;
     pointer-events: none;
     z-index: 10;
@@ -626,9 +626,10 @@
     right: 0;
     bottom: 0;
     z-index: 1;
-    border-radius: 0; /* Remove desktop border radius */
-    margin-left: 0; /* Remove desktop margin */
-    margin-top: 0; /* Remove desktop top margin */
+    border-radius: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden;
   }
   
   /* Floating buttons on map - positioned below navbar */
@@ -746,6 +747,87 @@
   
   .listings-wrapper input:checked + .view-toggle-slider:before {
     transform: translateX(22px);
+  }
+  
+  /* Mobile search overlay */
+  .mobile-search-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: white;
+    z-index: 2000;
+    display: none;
+    flex-direction: column;
+  }
+  
+  .mobile-search-overlay.active {
+    display: flex;
+  }
+  
+  .mobile-overlay-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .mobile-overlay-close {
+    background: none;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+  }
+  
+  .mobile-overlay-close svg {
+    width: 24px;
+    height: 24px;
+    stroke-width: 2;
+  }
+  
+  .mobile-overlay-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+  }
+  
+  .mobile-overlay-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+  }
+  
+  .mobile-overlay-footer {
+    padding: 16px 20px;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    gap: 12px;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom));
+  }
+  
+  .mobile-clear-btn {
+    flex: 1;
+    background: white;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  
+  .mobile-apply-btn {
+    flex: 1;
+    background: #0F2C3A;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
   }
   
   /* Mobile popup adjustments */
