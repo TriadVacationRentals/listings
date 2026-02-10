@@ -1052,16 +1052,7 @@
 
 /* Clean close button */
 .leaflet-popup-close-button {
-  color: #0F2C3A !important;
-  font-size: 24px !important;
-  font-weight: 300 !important;
-  padding: 8px 12px !important;
-  right: 4px !important;
-  top: 4px !important;
-}
-
-.leaflet-popup-close-button:hover {
-  color: #16A8EE !important;
+  display: none !important;
 }
 
 /* ============================================ */
