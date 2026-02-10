@@ -30,7 +30,7 @@
 .listings-wrapper .listings-container {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 150px);
+  height: calc(100vh - 140px);
   width: 100%;
   margin: 0;
 }
@@ -328,6 +328,71 @@
 .listings-wrapper .card-price span {
   font-weight: 400;
   font-size: 14px;
+}
+
+/* ============================================ */
+/* RESPONSIVE CARD SIZING FOR LAPTOPS */
+/* ============================================ */
+@media (min-width: 1200px) and (max-width: 1600px) {
+  /* Smaller image height */
+  .listings-wrapper .card-image {
+    height: 180px;
+  }
+  
+  /* Reduce padding */
+  .listings-wrapper .card-content {
+    padding: 12px;
+  }
+  
+  /* Smaller title */
+  .listings-wrapper .card-title {
+    font-size: 15px;
+    margin: 6px 0;
+  }
+  
+  /* Smaller location text */
+  .listings-wrapper .card-location {
+    font-size: 12px;
+    margin-bottom: 3px;
+  }
+  
+  .listings-wrapper .card-location svg {
+    width: 14px;
+    height: 14px;
+  }
+  
+  /* Smaller details */
+  .listings-wrapper .card-details {
+    font-size: 11px;
+    gap: 3px;
+    margin-bottom: 8px;
+  }
+  
+  .listings-wrapper .card-details svg {
+    width: 12px;
+    height: 12px;
+  }
+  
+  /* Smaller price */
+  .listings-wrapper .card-price {
+    font-size: 14px;
+  }
+  
+  .listings-wrapper .card-price span {
+    font-size: 12px;
+  }
+  
+  /* Smaller property type badge */
+  .listings-wrapper .property-type-badge {
+    padding: 6px 10px;
+    font-size: 12px;
+    gap: 6px;
+  }
+  
+  .listings-wrapper .property-type-badge svg {
+    width: 16px;
+    height: 16px;
+  }
 }
 
 /* ============================================ */
