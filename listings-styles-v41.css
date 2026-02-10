@@ -474,7 +474,8 @@
     background: white;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    padding: 16px !important; /* Add padding on all sides */
+    padding: 20px !important; /* 20px padding on all sides */
+    padding-top: 90px !important; /* Top space for search bar - scrolls away */
     padding-bottom: 90px !important; /* Space for toggle bar */
     display: none;
     z-index: 100;
@@ -530,9 +531,12 @@
   }
   
   .listings-wrapper .property-type-badge {
+    top: 14px !important; /* More space from edges */
+    left: 14px !important; /* More space from edges */
     padding: 8px 12px !important;
     font-size: 13px !important;
     gap: 6px !important;
+    border-radius: 8px !important; /* Add border radius */
   }
   
   .listings-wrapper .property-type-badge svg {
