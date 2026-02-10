@@ -2395,46 +2395,43 @@
     }
     
     function syncOverlayFields() {
-      const locationInput = document.getElementById('mobile-location-input');
-      const checkinInput = document.getElementById('mobile-checkin-input');
-      const checkoutInput = document.getElementById('mobile-checkout-input');
-      const guestsInput = document.getElementById('mobile-guests-input');
-      
-      if (locationInput) {
-        if (selectedLocation) {
-          locationInput.value = selectedLocation.description;
-        } else {
-          // Only clear if user manually cleared it (not just empty)
-          if (locationInput.value && !selectedLocation) {
-            // Don't override user's clearing action
-          }
-        }
-      }
-      
-      if (checkinInput) {
-        if (checkinDate) {
-          const d = new Date(checkinDate + 'T00:00:00');
-          checkinInput.value = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        } else {
-          checkinInput.value = '';
-          checkinInput.placeholder = 'Add date';
-        }
-      }
-      
-      if (checkoutInput) {
-        if (checkoutDate) {
-          const d = new Date(checkoutDate + 'T00:00:00');
-          checkoutInput.value = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        } else {
-          checkoutInput.value = '';
-          checkoutInput.placeholder = 'Add date';
-        }
-      }
-      
-      if (guestsInput) {
-        guestsInput.value = `${guestCount} ${guestCount === 1 ? 'guest' : 'guests'}`;
-      }
+  const locationInput = document.getElementById('mobile-location-input');
+  const checkinInput = document.getElementById('mobile-checkin-input');
+  const checkoutInput = document.getElementById('mobile-checkout-input');
+  const guestsInput = document.getElementById('mobile-guests-input');
+  
+  if (locationInput) {
+    if (selectedLocation) {
+      locationInput.value = selectedLocation.description;
     }
+  }
+  
+  if (checkinInput) {
+    if (checkinDate) {
+      const d = new Date(checkinDate + 'T00:00:00');
+      checkinInput.value = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      checkinInput.placeholder = ''; // Remove placeholder when filled
+    } else {
+      checkinInput.value = '';
+      checkinInput.placeholder = 'Add date'; // Show placeholder when empty
+    }
+  }
+  
+  if (checkoutInput) {
+    if (checkoutDate) {
+      const d = new Date(checkoutDate + 'T00:00:00');
+      checkoutInput.value = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      checkoutInput.placeholder = ''; // Remove placeholder when filled
+    } else {
+      checkoutInput.value = '';
+      checkoutInput.placeholder = 'Add date'; // Show placeholder when empty
+    }
+  }
+  
+  if (guestsInput) {
+    guestsInput.value = `${guestCount} ${guestCount === 1 ? 'guest' : 'guests'}`;
+  }
+}
     
     function moveFiltersToOverlay() {
       const container = document.getElementById('mobile-filters-container');
