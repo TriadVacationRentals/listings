@@ -251,7 +251,17 @@
     // ============================================
     
     async function initializeMap() {
-      console.log('🗺️ Initializing map...');
+  console.log('🗺️ Initializing map...');
+  
+  // Show loading skeleton
+  const mapContainer = document.getElementById('listings-map');
+  mapContainer.innerHTML = `
+    <div class="map-loading-skeleton">
+      <div class="map-loading-spinner"></div>
+    </div>
+  `;
+  
+  // [rest of existing code continues...]
       
       // Calculate center point from all properties
       const validProperties = allProperties.filter(p => p.latitude && p.longitude);
@@ -361,6 +371,9 @@
       
       console.log(`✅ Map initialized with ${mapMarkers.length} markers`);
       console.log(`✅ Viewport filtering active`);
+          // Remove loading skeleton
+  const skeleton = document.querySelector('.map-loading-skeleton');
+  if (skeleton) skeleton.remove();
     }
     
     // ============================================
@@ -1982,24 +1995,27 @@
       if (applyBtn) {
         console.log('✅ Mobile apply button found:', applyBtn);
         applyBtn.addEventListener('click', async () => {
-          console.log('📱 Mobile apply button clicked');
-          
-          // Validate location is required
-          if (!selectedLocation) {
-            alert('Please enter a location');
-            return;
-          }
-          
-          // Sync mobile fields to desktop
-          syncMobileToDesktop();
-          
-          // Run search
-          console.log('📱 Running search...');
-          await handleSearch();
-          
-          // Close overlay
-          overlay.classList.remove('active');
-        });
+  console.log('📱 Mobile apply button clicked');
+  
+  // Validate location is required
+  if (!selectedLocation) {
+    alert('Please enter a location');
+    return;
+  }
+  
+  // Close overlay FIRST
+  overlay.classList.remove('active');
+  
+  // Show loading state immediately
+  showLoadingState();
+  
+  // Sync mobile fields to desktop
+  syncMobileToDesktop();
+  
+  // Run search
+  console.log('📱 Running search...');
+  await handleSearch();
+});
       } else {
         console.error('❌ Mobile apply button NOT FOUND - check HTML for id="mobile-apply-search"');
       }
