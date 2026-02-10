@@ -269,7 +269,20 @@
   height: 11vw; /* Scales with viewport width */
   object-fit: cover;
   min-height: 140px; /* Don't go too small */
-  max-height: 200px; /* Don't go too large */
+  max-height: 200px; /* Don't go too large on big screens */
+}
+
+/* Limit image height on laptop screens */
+@media (max-width: 1600px) {
+  .listings-wrapper .card-image {
+    max-height: 150px; /* Shorter on laptops */
+  }
+}
+
+@media (max-width: 1400px) {
+  .listings-wrapper .card-image {
+    max-height: 130px; /* Even shorter on smaller laptops */
+  }
 }
 
 .listings-wrapper .card-content {
