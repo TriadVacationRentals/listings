@@ -77,6 +77,30 @@
   width: 100%;
 }
 
+/* Modern minimal scrollbar */
+.listings-wrapper .cards-section::-webkit-scrollbar {
+  width: 6px;
+}
+
+.listings-wrapper .cards-section::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.listings-wrapper .cards-section::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 10px;
+}
+
+.listings-wrapper .cards-section::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Firefox scrollbar */
+.listings-wrapper .cards-section {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db transparent;
+}
+
 /* Map on right - with top padding */
 .listings-wrapper .map-section {
   flex: 1;
