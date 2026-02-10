@@ -1978,20 +1978,18 @@
         applyBtn.addEventListener('click', async () => {
           console.log('📱 Mobile apply button clicked');
           
+          // Validate location is required
+          if (!selectedLocation) {
+            alert('Please enter a location');
+            return;
+          }
+          
           // Sync mobile fields to desktop
           syncMobileToDesktop();
           
-          // Run search if location is selected
-          if (selectedLocation) {
-            console.log('📱 Running search...');
-            await handleSearch();
-          } else {
-            console.log('📱 No location selected, just applying filters');
-            // Just apply filters to current properties
-            const filteredProperties = applyCurrentFilters(allProperties);
-            renderPropertyCards(filteredProperties);
-            updateMapMarkers(filteredProperties);
-          }
+          // Run search
+          console.log('📱 Running search...');
+          await handleSearch();
           
           // Close overlay
           overlay.classList.remove('active');
