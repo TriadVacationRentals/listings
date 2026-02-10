@@ -561,13 +561,9 @@
     display: block;
   }
   
-  /* Hide map when list is active and disable interaction */
+  /* Completely hide map section when list is active */
   .map-section.list-view-active {
-    pointer-events: none; /* Disable all map interaction when hidden */
-  }
-  
-  .map-section.list-view-active #listings-map {
-    display: none;
+    display: none; /* Hide entire map section */
   }
   
   /* List view header */
@@ -618,10 +614,10 @@
     display: none;
   }
   
-  /* Map section: full screen */
+  /* Map section: starts below search button */
   .listings-wrapper .map-section {
     position: fixed;
-    top: 0;
+    top: 131px; /* Below navbar (76px) + search button (55px) */
     left: 0;
     right: 0;
     bottom: 0;
@@ -769,7 +765,7 @@
   .mobile-search-panel {
     background: white;
     width: 100%;
-    max-height: 90vh;
+    max-height: 85vh; /* Reduced from 90vh to keep close button accessible */
     border-radius: 24px 24px 0 0;
     display: flex;
     flex-direction: column;
