@@ -474,10 +474,72 @@
     background: white;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    padding-bottom: 90px; /* Space for toggle bar */
+    padding: 16px !important; /* Add padding on all sides */
+    padding-bottom: 90px !important; /* Space for toggle bar */
     display: none;
     z-index: 100;
   }
+  
+  /* Mobile card styling - bigger text and spacing */
+  .listings-wrapper .property-card {
+    margin-bottom: 20px; /* More space between cards */
+  }
+  
+  .listings-wrapper .card-image {
+    height: 220px !important; /* Taller images on mobile */
+    max-height: none !important; /* Override laptop max-height */
+  }
+  
+  .listings-wrapper .card-content {
+    padding: 14px !important; /* More padding */
+  }
+  
+  .listings-wrapper .card-location {
+    font-size: 14px !important; /* Bigger text */
+    margin-bottom: 6px !important;
+    gap: 4px !important;
+  }
+  
+  .listings-wrapper .card-location svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+  
+  .listings-wrapper .card-title {
+    font-size: 18px !important; /* Bigger title */
+    margin: 8px 0 !important;
+  }
+  
+  .listings-wrapper .card-details {
+    font-size: 14px !important; /* Bigger icons text */
+    gap: 6px !important;
+    margin-bottom: 10px !important;
+  }
+  
+  .listings-wrapper .card-details svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+  
+  .listings-wrapper .card-price {
+    font-size: 18px !important; /* Bigger price */
+  }
+  
+  .listings-wrapper .card-price span {
+    font-size: 14px !important;
+  }
+  
+  .listings-wrapper .property-type-badge {
+    padding: 8px 12px !important;
+    font-size: 13px !important;
+    gap: 6px !important;
+  }
+  
+  .listings-wrapper .property-type-badge svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+}
   
   /* Solid white at top so cards scroll behind search bar cleanly */
   .listings-wrapper .cards-section::before {
