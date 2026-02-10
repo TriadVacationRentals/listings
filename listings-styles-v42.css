@@ -562,7 +562,11 @@
     display: block;
   }
   
-  /* Hide map when list is active */
+  /* Hide map when list is active and disable interaction */
+  .map-section.list-view-active {
+    pointer-events: none; /* Disable all map interaction when hidden */
+  }
+  
   .map-section.list-view-active #listings-map {
     display: none;
   }
