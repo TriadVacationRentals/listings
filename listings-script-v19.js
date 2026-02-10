@@ -1741,22 +1741,27 @@
       
       // View toggle - ON = map visible, OFF = list visible
       if (viewToggleCheckbox) {
-        let savedMapBounds = null;
-        
         viewToggleCheckbox.addEventListener('change', () => {
           if (viewToggleCheckbox.checked) {
             // Toggle ON = Map visible
             mapSection.classList.remove('list-view-active');
             cardsSection.classList.remove('list-view-active');
             
-            // Restore map bounds if saved
-            if (mapInstance && savedMapBounds) {
+            // Restore map to show all markers properly
+            if (mapInstance && mapMarkers.length > 0) {
               setTimeout(() => {
                 try {
-                  mapInstance.fitBounds(savedMapBounds, { padding: 50, duration: 0 });
-                  mapInstance.resize(); // Force map to recalculate size
+                  // Invalidate size to fix grey tiles issue
+                  mapInstance.invalidateSize();
+                  
+                  // Fit bounds to all markers
+                  const group = L.featureGroup(mapMarkers);
+                  mapInstance.fitBounds(group.getBounds().pad(0.1), {
+                    animate: false,
+                    duration: 0
+                  });
                 } catch (error) {
-                  console.warn('Could not restore map bounds:', error);
+                  console.warn('Could not restore map:', error);
                 }
               }, 100);
             }
@@ -1764,15 +1769,6 @@
             console.log('🗺️ Map visible');
           } else {
             // Toggle OFF = List visible
-            // Save current map bounds before hiding
-            if (mapInstance) {
-              try {
-                savedMapBounds = mapInstance.getBounds();
-              } catch (error) {
-                console.warn('Could not save map bounds:', error);
-              }
-            }
-            
             mapSection.classList.add('list-view-active');
             cardsSection.classList.add('list-view-active');
             
