@@ -124,8 +124,14 @@
       const rating = property.averageRating;
       const hasRating = rating && rating > 0;
       
-      // Build property URL
-      const propertyUrl = `/listings/${property.listingId}`;
+      // Build property URL with search params
+      const params = new URLSearchParams();
+      if (checkinDate) params.append('checkin', checkinDate);
+      if (checkoutDate) params.append('checkout', checkoutDate);
+      if (guestCount && guestCount > 1) params.append('guests', guestCount);
+      
+      const queryString = params.toString();
+      const propertyUrl = `/listings/${property.listingId}${queryString ? '?' + queryString : ''}`;
       
       return `
         <div class="property-card" data-listing-id="${property.listingId}" data-lat="${property.latitude}" data-lng="${property.longitude}">
@@ -477,9 +483,16 @@
         iconAnchor: [null, 14]
       });
       
-      // Create popup content
+      // Create popup content with search params
+      const params = new URLSearchParams();
+      if (checkinDate) params.append('checkin', checkinDate);
+      if (checkoutDate) params.append('checkout', checkoutDate);
+      if (guestCount && guestCount > 1) params.append('guests', guestCount);
+      const queryString = params.toString();
+      const propertyUrl = `/listings/${property.listingId}${queryString ? '?' + queryString : ''}`;
+      
       const popupContent = `
-        <a href="/listings/${property.listingId}" style="text-decoration: none; color: inherit; display: block;">
+        <a href="${propertyUrl}" style="text-decoration: none; color: inherit; display: block;">
           <div style="font-family: 'Manrope', sans-serif;">
             ${property.featuredImage ? `<img src="${property.featuredImage}" style="width: 100%; height: 150px; object-fit: cover; border-radius: 12px 12px 0 0; margin-bottom: 12px;" alt="${property.name}">` : ''}
             <div style="padding: 0 8px 8px;">
