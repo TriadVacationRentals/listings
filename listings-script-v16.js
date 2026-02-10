@@ -2114,14 +2114,21 @@
       // Initialize guest display
       updateMobileGuestDisplay();
       
-      // Watch for changes in desktop fields and sync
-      setInterval(syncOverlayFields, 500);
+      // Initial sync
+      syncOverlayFields();
     }
     
     function toggleMobileCalendar() {
       const calWrapper = document.getElementById('mobile-calendar-wrapper');
       const guestPopup = document.getElementById('mobile-guest-popup');
-      const dateFieldGroups = document.querySelectorAll('.mobile-search-content .mobile-search-field-group');
+      
+      // Get BOTH date input fields directly
+      const checkinInput = document.getElementById('mobile-checkin-input');
+      const checkoutInput = document.getElementById('mobile-checkout-input');
+      
+      // Get their parent containers
+      const checkinParent = checkinInput?.closest('.mobile-search-field-group');
+      const checkoutParent = checkoutInput?.closest('.mobile-search-field-group');
       
       // Hide guest popup
       if (guestPopup) guestPopup.classList.remove('active');
@@ -2130,19 +2137,14 @@
       if (calWrapper.classList.contains('active')) {
         // Closing calendar - show date fields again
         calWrapper.classList.remove('active');
-        dateFieldGroups.forEach(group => {
-          if (group.querySelector('#mobile-checkin-input') || group.querySelector('#mobile-checkout-input')) {
-            group.style.display = 'block';
-          }
-        });
+        if (checkinParent) checkinParent.style.display = 'block';
+        if (checkoutParent) checkoutParent.style.display = 'block';
       } else {
-        // Opening calendar - hide date fields
+        // Opening calendar - hide date fields, show calendar
         calWrapper.classList.add('active');
-        dateFieldGroups.forEach(group => {
-          if (group.querySelector('#mobile-checkin-input') || group.querySelector('#mobile-checkout-input')) {
-            group.style.display = 'none';
-          }
-        });
+        calWrapper.style.display = 'block';
+        if (checkinParent) checkinParent.style.display = 'none';
+        if (checkoutParent) checkoutParent.style.display = 'none';
         renderMobileCalendar();
       }
     }
@@ -2394,8 +2396,15 @@
       const checkoutInput = document.getElementById('mobile-checkout-input');
       const guestsInput = document.getElementById('mobile-guests-input');
       
-      if (locationInput && selectedLocation) {
-        locationInput.value = selectedLocation.description;
+      if (locationInput) {
+        if (selectedLocation) {
+          locationInput.value = selectedLocation.description;
+        } else {
+          // Only clear if user manually cleared it (not just empty)
+          if (locationInput.value && !selectedLocation) {
+            // Don't override user's clearing action
+          }
+        }
       }
       
       if (checkinInput) {
