@@ -126,8 +126,8 @@
       
       // Build property URL with search params
       const params = new URLSearchParams();
-      if (checkinDate) params.append('checkin', checkinDate);
-      if (checkoutDate) params.append('checkout', checkoutDate);
+      if (checkinDate) params.append('checkin', formatDate(checkinDate));
+      if (checkoutDate) params.append('checkout', formatDate(checkoutDate));
       if (guestCount && guestCount > 1) params.append('guests', guestCount);
       
       const queryString = params.toString();
@@ -485,8 +485,8 @@
       
       // Create popup content with search params
       const params = new URLSearchParams();
-      if (checkinDate) params.append('checkin', checkinDate);
-      if (checkoutDate) params.append('checkout', checkoutDate);
+      if (checkinDate) params.append('checkin', formatDate(checkinDate));
+      if (checkoutDate) params.append('checkout', formatDate(checkoutDate));
       if (guestCount && guestCount > 1) params.append('guests', guestCount);
       const queryString = params.toString();
       const propertyUrl = `/listings/${property.listingId}${queryString ? '?' + queryString : ''}`;
