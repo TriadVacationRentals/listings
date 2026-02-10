@@ -854,6 +854,73 @@
     cursor: pointer;
   }
   
+  /* Mobile guest popup */
+  .guest-popup-mobile {
+    display: none;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 8px;
+  }
+  
+  .guest-popup-mobile.active {
+    display: block;
+  }
+  
+  .guest-control-mobile {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .guest-label-mobile {
+    font-size: 15px;
+    font-weight: 500;
+    color: #0F2C3A;
+  }
+  
+  .guest-buttons-mobile {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .guest-btn-mobile {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid #d1d5db;
+    background: white;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .guest-btn-mobile:hover {
+    border-color: #0F2C3A;
+    background: #f3f4f6;
+  }
+  
+  .guest-number-mobile {
+    font-size: 16px;
+    font-weight: 600;
+    min-width: 24px;
+    text-align: center;
+  }
+  
+  /* Calendar wrapper mobile */
+  .calendar-wrapper-mobile {
+    display: none;
+  }
+  
+  .calendar-wrapper-mobile.active {
+    display: block;
+  }
+  
   /* Mobile popup adjustments */
   .leaflet-popup-content-wrapper {
     max-width: 90vw !important;
