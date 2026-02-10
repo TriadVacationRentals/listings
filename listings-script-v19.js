@@ -1354,11 +1354,15 @@
     }
     
     function formatDate(date) {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
-    }
+  // Handle both Date objects and strings
+  if (typeof date === 'string') {
+    return date; // Already in YYYY-MM-DD format
+  }
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
     
     // ============================================
     // PHASE 6: FILTER DROPDOWN
@@ -2275,47 +2279,45 @@
     }
     
     function selectMobileDate(dateStr) {
-      if (!checkinDate) {
-        // Selecting check-in
-        checkinDate = dateStr;
-        checkoutDate = null;
-        console.log('✅ Check-in selected:', checkinDate);
-        renderMobileCalendar(); // Re-render to show selection
-        syncOverlayFields(); // Update input displays
-        // Calendar stays open for check-out selection
-      } else if (!checkoutDate) {
-        // Selecting check-out
-        if (dateStr <= checkinDate) {
-          alert('Check-out must be after check-in');
-          return;
-        }
-        checkoutDate = dateStr;
-        console.log('✅ Check-out selected:', checkoutDate);
-        syncOverlayFields(); // Update input displays
-        
-        // CLOSE calendar and show date fields again
-        const calWrapper = document.getElementById('mobile-calendar-wrapper');
-        const dateFieldGroups = document.querySelectorAll('.mobile-search-content .mobile-search-field-group');
-        
-        if (calWrapper) {
-          calWrapper.classList.remove('active');
-        }
-        
-        // Show date field groups again
-        dateFieldGroups.forEach(group => {
-          if (group.querySelector('#mobile-checkin-input') || group.querySelector('#mobile-checkout-input')) {
-            group.style.display = 'flex';
-          }
-        });
-      } else {
-        // Both already selected, start over
-        checkinDate = dateStr;
-        checkoutDate = null;
-        console.log('✅ Restarting - Check-in selected:', checkinDate);
-        renderMobileCalendar();
-        syncOverlayFields();
-      }
+  if (!checkinDate) {
+    // Selecting check-in
+    checkinDate = dateStr;
+    checkoutDate = null;
+    console.log('✅ Check-in selected:', checkinDate);
+    renderMobileCalendar(); // Re-render to show selection
+    syncOverlayFields(); // Update input displays
+    // Calendar stays open for check-out selection
+  } else if (!checkoutDate) {
+    // Selecting check-out
+    if (dateStr <= checkinDate) {
+      alert('Check-out must be after check-in');
+      return;
     }
+    checkoutDate = dateStr;
+    console.log('✅ Check-out selected:', checkoutDate);
+    syncOverlayFields(); // Update input displays
+    
+    // CLOSE calendar and show date fields again
+    const calWrapper = document.getElementById('mobile-calendar-wrapper');
+    const checkinParent = document.getElementById('mobile-checkin-input')?.closest('.mobile-search-field-group');
+    const checkoutParent = document.getElementById('mobile-checkout-input')?.closest('.mobile-search-field-group');
+    
+    if (calWrapper) {
+      calWrapper.classList.remove('active');
+    }
+    
+    // Show date field groups again
+    if (checkinParent) checkinParent.style.display = 'flex';
+    if (checkoutParent) checkoutParent.style.display = 'flex';
+  } else {
+    // Both already selected, start over
+    checkinDate = dateStr;
+    checkoutDate = null;
+    console.log('✅ Restarting - Check-in selected:', checkinDate);
+    renderMobileCalendar();
+    syncOverlayFields();
+  }
+}
     
     function clearMobileDates() {
       checkinDate = null;
