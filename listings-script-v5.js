@@ -32,9 +32,44 @@
         console.log(`📊 Loaded ${allProperties.length} properties`);
         console.log(`🗺️ Map initialized with ${mapMarkers.length} markers`);
         
+        // ✅ NEW: Restore search state from URL if present
+        restoreSearchFromURL();
+        
       } catch (error) {
         console.error('❌ Initialization failed:', error);
         showError('Failed to load properties. Please refresh the page.');
+      }
+    }
+    
+    // ============================================
+    // RESTORE SEARCH STATE FROM URL
+    // ============================================
+    function restoreSearchFromURL() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const location = urlParams.get('location');
+      const placeId = urlParams.get('placeId');
+      
+      if (location && placeId) {
+        console.log('🔄 Restoring location from URL:', location);
+        
+        // Restore selectedLocation object so search button works
+        selectedLocation = {
+          description: location,
+          place_id: placeId
+        };
+        
+        // Fill in the location input (both desktop and mobile)
+        const desktopInput = document.getElementById('location-input');
+        if (desktopInput) {
+          desktopInput.value = location;
+        }
+        
+        const mobileInput = document.getElementById('mobile-location-input');
+        if (mobileInput) {
+          mobileInput.value = location;
+        }
+        
+        console.log('✅ Location restored:', selectedLocation);
       }
     }
     
