@@ -10,36 +10,44 @@
     let mapMarkers = [];
     let markerClusterGroup = null; // Global cluster group
     let isInitialLoad = true; // Track if this is the first load
+    // Infinite scroll for cards
+    let currentCardPage = 0;
+    const CARDS_PER_PAGE = 24;
+    let currentFilteredProperties = []; // Store current filtered list
+    let isLoadingMoreCards = false; // Prevent multiple simultaneous loads
     
     // Initialize
     async function init() {
-      console.log('🚀 Phase 2 & 3: Initializing...');
-      
-      // Show skeleton loading cards
-      showLoadingState();
-      
-      try {
-        // Fetch all properties from Worker
-        await fetchAllProperties();
-        
-        // Render property cards
-        renderPropertyCards(allProperties);
-        
-        // Initialize map
-        await initializeMap();
-        
-        console.log('✅ Phase 2 & 3 complete!');
-        console.log(`📊 Loaded ${allProperties.length} properties`);
-        console.log(`🗺️ Map initialized with ${mapMarkers.length} markers`);
-        
-        // ✅ NEW: Restore search state from URL if present
-        restoreSearchFromURL();
-        
-      } catch (error) {
-        console.error('❌ Initialization failed:', error);
-        showError('Failed to load properties. Please refresh the page.');
-      }
-    }
+  console.log('🚀 Phase 2 & 3: Initializing...');
+  
+  // Show skeleton loading cards
+  showLoadingState();
+  
+  try {
+    // Fetch all properties from Worker
+    await fetchAllProperties();
+    
+    // Render property cards
+    renderPropertyCards(allProperties);
+    
+    // Initialize map
+    await initializeMap();
+    
+    // Setup infinite scroll
+    setupInfiniteScroll(); // ✅ ADD THIS LINE
+    
+    console.log('✅ Phase 2 & 3 complete!');
+    console.log(`📊 Loaded ${allProperties.length} properties`);
+    console.log(`🗺️ Map initialized with ${mapMarkers.length} markers`);
+    
+    // ✅ NEW: Restore search state from URL if present
+    restoreSearchFromURL();
+    
+  } catch (error) {
+    console.error('❌ Initialization failed:', error);
+    showError('Failed to load properties. Please refresh the page.');
+  }
+}
     
     // ============================================
     // RESTORE SEARCH STATE FROM URL
@@ -132,24 +140,92 @@
       });
     }
     
-    // Render property cards
-    function renderPropertyCards(properties) {
-      const container = document.getElementById('cards-container');
+   // Render property cards with infinite scroll
+function renderPropertyCards(properties) {
+  currentFilteredProperties = properties; // Store for pagination
+  currentCardPage = 0; // Reset pagination
+  isLoadingMoreCards = false; // Reset loading flag
+  
+  const container = document.getElementById('cards-container');
+  
+  if (properties.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <h3>No properties found</h3>
+        <p>Try adjusting your search or filters.</p>
+      </div>
+    `;
+    return;
+  }
+  
+  // Clear container and render first page
+  container.innerHTML = '';
+  renderCardPage(0);
+  
+  console.log(`✅ Rendered initial ${Math.min(CARDS_PER_PAGE, properties.length)} of ${properties.length} cards`);
+}
+// Render a specific page of cards
+function renderCardPage(pageIndex) {
+  const start = pageIndex * CARDS_PER_PAGE;
+  const end = start + CARDS_PER_PAGE;
+  const pageProperties = currentFilteredProperties.slice(start, end);
+  
+  if (pageProperties.length === 0) return;
+  
+  const container = document.getElementById('cards-container');
+  const cardsHTML = pageProperties.map(p => createPropertyCard(p)).join('');
+  
+  if (pageIndex === 0) {
+    // First page - replace content
+    container.innerHTML = cardsHTML;
+  } else {
+    // Subsequent pages - append content
+    container.insertAdjacentHTML('beforeend', cardsHTML);
+  }
+  
+  console.log(`✅ Loaded cards ${start + 1}-${Math.min(end, currentFilteredProperties.length)} of ${currentFilteredProperties.length}`);
+}
+
+// Setup infinite scroll listener
+function setupInfiniteScroll() {
+  const cardsSection = document.getElementById('cards-section');
+  if (!cardsSection) return;
+  
+  // Remove old listener if exists
+  cardsSection.removeEventListener('scroll', handleCardScroll);
+  
+  // Add new listener
+  cardsSection.addEventListener('scroll', handleCardScroll);
+  
+  console.log('🔄 Infinite scroll enabled');
+}
+
+// Handle scroll event for loading more cards
+function handleCardScroll() {
+  // Prevent multiple simultaneous loads
+  if (isLoadingMoreCards) return;
+  
+  const cardsSection = document.getElementById('cards-section');
+  const scrollPosition = cardsSection.scrollTop + cardsSection.clientHeight;
+  const scrollHeight = cardsSection.scrollHeight;
+  
+  // Load more when 300px from bottom
+  if (scrollPosition >= scrollHeight - 300) {
+    const nextPage = currentCardPage + 1;
+    const totalPages = Math.ceil(currentFilteredProperties.length / CARDS_PER_PAGE);
+    
+    if (nextPage < totalPages) {
+      isLoadingMoreCards = true;
+      currentCardPage = nextPage;
       
-      if (properties.length === 0) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <h3>No properties found</h3>
-            <p>Try adjusting your search or filters.</p>
-          </div>
-        `;
-        return;
-      }
-      
-      container.innerHTML = properties.map(property => createPropertyCard(property)).join('');
-      
-      console.log(`✅ Rendered ${properties.length} property cards`);
+      // Small delay for smooth loading
+      setTimeout(() => {
+        renderCardPage(nextPage);
+        isLoadingMoreCards = false;
+      }, 100);
     }
+  }
+}
     
     // Create single property card HTML
     function createPropertyCard(property) {
@@ -468,31 +544,38 @@
     }
     
     function renderPropertyCardsWithAnimation(properties) {
-      const container = document.getElementById('cards-container');
-      
-      if (properties.length === 0) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <h3>No properties in this area</h3>
-            <p>Try zooming out or panning the map to see more properties.</p>
-          </div>
-        `;
-        return;
-      }
-      
-      // Smooth fade out
-      container.style.transition = 'opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
-      container.style.opacity = '0';
-      
-      setTimeout(() => {
-        container.innerHTML = properties.map(property => createPropertyCard(property)).join('');
-        
-        // Smooth fade in
-        requestAnimationFrame(() => {
-          container.style.opacity = '1';
-        });
-      }, 250);
-    }
+  const container = document.getElementById('cards-container');
+  
+  if (properties.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <h3>No properties in this area</h3>
+        <p>Try zooming out or panning the map to see more properties.</p>
+      </div>
+    `;
+    return;
+  }
+  
+  // Store properties for infinite scroll
+  currentFilteredProperties = properties;
+  currentCardPage = 0;
+  isLoadingMoreCards = false;
+  
+  // Smooth fade out
+  container.style.transition = 'opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
+  container.style.opacity = '0';
+  
+  setTimeout(() => {
+    // Render first page only
+    container.innerHTML = '';
+    renderCardPage(0);
+    
+    // Smooth fade in
+    requestAnimationFrame(() => {
+      container.style.opacity = '1';
+    });
+  }, 250);
+}
     
     function updateMarkerVisibility(visibleProperties) {
       const visibleIds = new Set(visibleProperties.map(p => p.listingId));
