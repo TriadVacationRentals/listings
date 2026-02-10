@@ -471,7 +471,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: white;
+    background: #f5f5f5;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     padding: 20px !important; /* 20px padding on all sides */
@@ -552,7 +552,7 @@
     left: 0;
     right: 0;
     height: 103px; /* Cover to middle of search button (76px navbar + 27px half of button) */
-    background: white;
+    background: #f5f5f5;
     pointer-events: none;
     z-index: 10;
   }
@@ -691,6 +691,7 @@
     display: flex !important;
     align-items: center;
     justify-content: space-between;
+    -webkit-tap-highlight-color: transparent; /* Remove iOS tap highlight */
   }
   
   .listings-wrapper .view-toggle-text {
@@ -705,6 +706,7 @@
     display: inline-block;
     width: 50px;
     height: 28px;
+    -webkit-tap-highlight-color: transparent; /* Remove iOS tap highlight */
   }
   
   .listings-wrapper .view-toggle-switch input {
@@ -723,6 +725,7 @@
     background-color: #E0E0E0;
     transition: 0.3s;
     border-radius: 14px;
+    -webkit-tap-highlight-color: transparent; /* Remove iOS tap highlight */
   }
   
   .listings-wrapper .view-toggle-slider:before {
@@ -1053,4 +1056,50 @@
 
 .leaflet-popup-close-button:hover {
   color: #16A8EE !important;
+}
+
+/* ============================================ */
+/* MARKER CLUSTERING */
+/* ============================================ */
+.marker-cluster-container {
+  background: none !important;
+  border: none !important;
+}
+
+.marker-cluster {
+  background: #16A8EE;
+  color: white;
+  border-radius: 50%;
+  text-align: center;
+  font-weight: 700;
+  border: 3px solid white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.marker-cluster:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.marker-cluster-small {
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  font-size: 14px;
+}
+
+.marker-cluster-medium {
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+  font-size: 16px;
+}
+
+.marker-cluster-large {
+  width: 60px;
+  height: 60px;
+  line-height: 60px;
+  font-size: 18px;
 }
