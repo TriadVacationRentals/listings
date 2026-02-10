@@ -809,20 +809,14 @@
     padding: 20px;
   }
   
-  /* MOBILE DATE FIELDS - FORCE 2 COLUMN GRID */
-  .mobile-search-content > div:has(input[id*="checkin"]),
-  .mobile-search-content > div:has(input[id*="checkout"]) {
-    display: inline-block !important;
-    width: calc(50% - 6px) !important;
-    vertical-align: top;
-  }
-  
-  .mobile-search-content > div:has(input[id*="checkin"]) {
-    margin-right: 12px;
-  }
-  
   .mobile-search-field-group {
     margin-bottom: 20px;
+  }
+  
+  /* Mobile date fields - make them full width */
+  .mobile-search-field-group {
+    display: block !important;
+    width: 100% !important;
   }
   
   .mobile-search-label {
