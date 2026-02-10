@@ -778,7 +778,7 @@
         box-shadow: 0 4px 20px rgba(0,0,0,0.15);
         padding: 20px;
         z-index: 2100;
-        min-width: 320px;
+        width: 340px;
         max-width: 90vw;
       ` : `
         position: absolute;
@@ -789,7 +789,7 @@
         box-shadow: 0 4px 20px rgba(0,0,0,0.15);
         padding: 20px;
         z-index: 1000;
-        min-width: 320px;
+        width: 340px;
       `;
       
       const month = type === 'checkin' ? currentCheckinMonth : currentCheckoutMonth;
@@ -2191,7 +2191,7 @@
       
       // Build calendar HTML
       let calendarHTML = `
-        <div style="padding: 20px; background: white; border-radius: 12px; border: 1px solid #e5e7eb;">
+        <div style="padding: 20px; background: white; border-radius: 12px; border: 1px solid #e5e7eb; max-width: 380px; margin: 0 auto;">
           <div style="text-align: center; margin-bottom: 16px; font-size: 14px; font-weight: 600; color: #16A8EE;">
             ${checkinDate && !checkoutDate ? 'Select check-out date' : 'Select check-in date'}
           </div>
