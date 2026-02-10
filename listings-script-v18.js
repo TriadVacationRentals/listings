@@ -1976,6 +1976,7 @@
       
       // Apply search/filters
       if (applyBtn) {
+        console.log('✅ Mobile apply button found:', applyBtn);
         applyBtn.addEventListener('click', async () => {
           console.log('📱 Mobile apply button clicked');
           
@@ -1995,6 +1996,8 @@
           // Close overlay
           overlay.classList.remove('active');
         });
+      } else {
+        console.error('❌ Mobile apply button NOT FOUND - check HTML for id="mobile-apply-search"');
       }
       
       // Clear all
@@ -2142,7 +2145,6 @@
       } else {
         // Opening calendar - hide date fields, show calendar
         calWrapper.classList.add('active');
-        calWrapper.style.display = 'block';
         if (checkinParent) checkinParent.style.display = 'none';
         if (checkoutParent) checkoutParent.style.display = 'none';
         renderMobileCalendar();
