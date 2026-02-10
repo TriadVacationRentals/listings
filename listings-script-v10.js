@@ -789,7 +789,7 @@
         box-shadow: 0 4px 20px rgba(0,0,0,0.15);
         padding: 20px 30px;
         z-index: 1000;
-        width: 340px;
+        width: 380px;
       `;
       
       const month = type === 'checkin' ? currentCheckinMonth : currentCheckoutMonth;
