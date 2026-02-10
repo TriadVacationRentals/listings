@@ -756,58 +756,82 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: white;
+    background: rgba(0, 0, 0, 0.5);
     z-index: 2000;
     display: none;
-    flex-direction: column;
+    align-items: flex-end;
   }
   
   .mobile-search-overlay.active {
     display: flex;
   }
   
-  .mobile-overlay-header {
-    padding: 16px 20px;
+  .mobile-search-panel {
+    background: white;
+    width: 100%;
+    max-height: 90vh;
+    border-radius: 24px 24px 0 0;
+    display: flex;
+    flex-direction: column;
+    animation: slideUp 0.3s ease-out;
+  }
+  
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  
+  .mobile-search-header {
+    padding: 20px;
     border-bottom: 1px solid #e5e7eb;
     display: flex;
     align-items: center;
-    gap: 16px;
+    justify-content: space-between;
   }
   
-  .mobile-overlay-close {
-    background: none;
-    border: none;
-    padding: 8px;
-    cursor: pointer;
-  }
-  
-  .mobile-overlay-close svg {
-    width: 24px;
-    height: 24px;
-    stroke-width: 2;
-  }
-  
-  .mobile-overlay-header h2 {
+  .mobile-search-title {
     font-size: 20px;
     font-weight: 600;
     margin: 0;
   }
   
-  .mobile-overlay-content {
+  .mobile-overlay-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    padding: 8px;
+    cursor: pointer;
+    line-height: 1;
+  }
+  
+  .mobile-search-content {
     flex: 1;
     overflow-y: auto;
     padding: 20px;
   }
   
-  .mobile-overlay-footer {
-    padding: 16px 20px;
-    border-top: 1px solid #e5e7eb;
-    display: flex;
-    gap: 12px;
-    padding-bottom: calc(16px + env(safe-area-inset-bottom));
+  .mobile-search-field-group {
+    margin-bottom: 20px;
   }
   
-  .mobile-clear-btn {
+  .mobile-search-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #0F2C3A;
+  }
+  
+  .mobile-search-input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    font-size: 15px;
+    font-family: inherit;
+  }
+  
+  .mobile-search-clear {
     flex: 1;
     background: white;
     border: 1px solid #d1d5db;
@@ -818,7 +842,7 @@
     cursor: pointer;
   }
   
-  .mobile-apply-btn {
+  .mobile-search-apply {
     flex: 1;
     background: #0F2C3A;
     color: white;
