@@ -30,7 +30,7 @@
 .listings-wrapper .listings-container {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 140px);
+  height: calc(100vh - 140px); /* Dynamic height minus navbar/spacing */
   width: 100%;
   margin: 0;
 }
@@ -243,11 +243,11 @@
   left: 12px;
   background: white;
   border-radius: 8px;
-  padding: 8px 14px;
+  padding: clamp(6px, 0.8vw, 8px) clamp(10px, 1.2vw, 14px);
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 14px;
+  gap: clamp(6px, 0.8vw, 8px);
+  font-size: clamp(12px, 1.2vw, 14px);
   font-weight: 600;
   color: #0F2C3A;
   box-shadow: 0 2px 8px rgba(0,0,0,0.15);
@@ -255,33 +255,33 @@
 }
 
 .listings-wrapper .property-type-badge svg {
-  width: 20px;
-  height: 20px;
+  width: clamp(16px, 1.6vw, 20px);
+  height: clamp(16px, 1.6vw, 20px);
   flex-shrink: 0;
 }
 
 .listings-wrapper .card-image {
   width: 100%;
-  height: 240px;
+  aspect-ratio: 16 / 9; /* Responsive aspect ratio instead of fixed height */
   object-fit: cover;
 }
 
 .listings-wrapper .card-content {
-  padding: 16px;
+  padding: clamp(12px, 1.5vw, 16px); /* Scales from 12px to 16px */
 }
 
 .listings-wrapper .card-location {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 14px;
+  font-size: clamp(11px, 1.2vw, 14px); /* Scales from 11px to 14px */
   color: var(--text);
   margin-bottom: 4px;
 }
 
 .listings-wrapper .card-location svg {
-  width: 16px;
-  height: 16px;
+  width: clamp(14px, 1.4vw, 16px);
+  height: clamp(14px, 1.4vw, 16px);
 }
 
 .listings-wrapper .card-rating {
@@ -292,107 +292,44 @@
 }
 
 .listings-wrapper .card-rating svg {
-  width: 14px;
-  height: 14px;
+  width: clamp(12px, 1.2vw, 14px);
+  height: clamp(12px, 1.2vw, 14px);
   color: #16A8EE;
 }
 
 .listings-wrapper .card-title {
-  font-size: 18px;
+  font-size: clamp(14px, 1.6vw, 18px); /* Scales from 14px to 18px */
   font-weight: 600;
   color: var(--text);
-  margin: 8px 0;
+  margin: clamp(6px, 0.8vw, 8px) 0;
   line-height: 1.3;
 }
 
 .listings-wrapper .card-details {
   display: flex;
   align-items: center;
-  gap: 4px;
-  font-size: 13px;
+  gap: clamp(3px, 0.4vw, 4px);
+  font-size: clamp(11px, 1.1vw, 13px); /* Scales from 11px to 13px */
   color: var(--text-muted);
-  margin-bottom: 12px;
+  margin-bottom: clamp(8px, 1vw, 12px);
 }
 
 .listings-wrapper .card-details svg {
+  width: clamp(12px, 1.2vw, 14px);
+  height: clamp(12px, 1.2vw, 14px);
   color: #6b7280;
   flex-shrink: 0;
 }
 
 .listings-wrapper .card-price {
-  font-size: 16px;
+  font-size: clamp(14px, 1.4vw, 16px); /* Scales from 14px to 16px */
   font-weight: 600;
   color: var(--text);
 }
 
 .listings-wrapper .card-price span {
   font-weight: 400;
-  font-size: 14px;
-}
-
-/* ============================================ */
-/* RESPONSIVE CARD SIZING FOR LAPTOPS */
-/* ============================================ */
-@media (min-width: 1200px) and (max-width: 1600px) {
-  /* Smaller image height */
-  .listings-wrapper .card-image {
-    height: 180px;
-  }
-  
-  /* Reduce padding */
-  .listings-wrapper .card-content {
-    padding: 12px;
-  }
-  
-  /* Smaller title */
-  .listings-wrapper .card-title {
-    font-size: 15px;
-    margin: 6px 0;
-  }
-  
-  /* Smaller location text */
-  .listings-wrapper .card-location {
-    font-size: 12px;
-    margin-bottom: 3px;
-  }
-  
-  .listings-wrapper .card-location svg {
-    width: 14px;
-    height: 14px;
-  }
-  
-  /* Smaller details */
-  .listings-wrapper .card-details {
-    font-size: 11px;
-    gap: 3px;
-    margin-bottom: 8px;
-  }
-  
-  .listings-wrapper .card-details svg {
-    width: 12px;
-    height: 12px;
-  }
-  
-  /* Smaller price */
-  .listings-wrapper .card-price {
-    font-size: 14px;
-  }
-  
-  .listings-wrapper .card-price span {
-    font-size: 12px;
-  }
-  
-  /* Smaller property type badge */
-  .listings-wrapper .property-type-badge {
-    padding: 6px 10px;
-    font-size: 12px;
-    gap: 6px;
-  }
-  
-  .listings-wrapper .property-type-badge svg {
-    width: 16px;
-    height: 16px;
-  }
+  font-size: clamp(12px, 1.2vw, 14px);
 }
 
 /* ============================================ */
