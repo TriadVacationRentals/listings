@@ -13,6 +13,10 @@
     async function init() {
       console.log('🚀 Phase 2 & 3: Initializing...');
       
+      // Create and show loading overlay
+      const loader = createLoadingOverlay();
+      document.body.appendChild(loader);
+      
       try {
         // Fetch all properties from Worker
         await fetchAllProperties();
@@ -30,7 +34,29 @@
       } catch (error) {
         console.error('❌ Initialization failed:', error);
         showError('Failed to load properties. Please refresh the page.');
+      } finally {
+        // Hide and remove loading overlay
+        loader.classList.add('hidden');
+        setTimeout(() => loader.remove(), 300);
       }
+    }
+    
+    // Create loading overlay element
+    function createLoadingOverlay() {
+      const overlay = document.createElement('div');
+      overlay.id = 'listings-loading-overlay';
+      overlay.className = 'listings-loading-overlay';
+      
+      overlay.innerHTML = `
+        <div class="loading-spinner">
+          <div class="spinner-ring"></div>
+          <div class="spinner-ring"></div>
+          <div class="spinner-ring"></div>
+          <div class="loading-text">Loading properties...</div>
+        </div>
+      `;
+      
+      return overlay;
     }
     
     // Fetch all properties
