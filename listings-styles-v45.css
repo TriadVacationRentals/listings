@@ -678,27 +678,6 @@
     color: #0F2C3A;
   }
 }
-@media (max-width: 768px) {
-  /* Hide desktop search on mobile */
-  .listings-wrapper .search-section {
-    display: none;
-  }
-
-  /* Stack content vertically on mobile */
-  .listings-wrapper .content-wrapper {
-    flex-direction: column;
-  }
-
-  /* Map takes most of screen */
-  .listings-wrapper .map-section {
-    flex: 1;
-  }
-
-  /* Cards in bottom sheet (we'll add this in Phase 5) */
-  .listings-wrapper .cards-section {
-    flex: 0 0 40%;
-  }
-}
 .listings-wrapper .search-btn {
   background: #0F2C3A;
   color: white;
