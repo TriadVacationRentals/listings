@@ -276,6 +276,15 @@
     function updateCardsFromMapBounds() {
       if (!mapInstance) return;
       
+      // On mobile list view, don't filter by map bounds
+      if (window.innerWidth <= 768) {
+        const mapSection = document.getElementById('map-section');
+        if (mapSection && mapSection.classList.contains('list-view-active')) {
+          console.log('📱 List view active - skipping map bounds filter');
+          return;
+        }
+      }
+      
       // On initial load, don't filter by viewport - show all properties
       if (isInitialLoad) {
         isInitialLoad = false;
@@ -380,11 +389,19 @@
     
     function updateMarkerVisibility(visibleProperties) {
       const visibleIds = new Set(visibleProperties.map(p => p.listingId));
+      const existingMarkerIds = new Set(mapMarkers.map(m => m.options.listingId));
       
+      // Create markers for NEW properties that don't have markers yet
+      visibleProperties.forEach(property => {
+        if (!existingMarkerIds.has(property.listingId)) {
+          addPropertyMarker(property);
+        }
+      });
+      
+      // Show/hide existing markers
       mapMarkers.forEach(marker => {
         const markerId = marker.options.listingId;
         
-        // Hide markers that don't match filters (set opacity to 0 and disable interaction)
         if (visibleIds.has(markerId)) {
           marker.setOpacity(1);
           marker.getElement()?.style.setProperty('pointer-events', 'auto');
@@ -1756,25 +1773,29 @@
       
       // View toggle - ON = map visible, OFF = list visible
       if (viewToggleCheckbox) {
+        let savedMapView = null; // Store center and zoom
+        let isMapView = true; // Track current view
+        
         viewToggleCheckbox.addEventListener('change', () => {
           if (viewToggleCheckbox.checked) {
             // Toggle ON = Map visible
+            isMapView = true;
             mapSection.classList.remove('list-view-active');
             cardsSection.classList.remove('list-view-active');
             
-            // Restore map to show all markers properly
-            if (mapInstance && mapMarkers.length > 0) {
+            // Restore map view
+            if (mapInstance) {
               setTimeout(() => {
                 try {
-                  // Invalidate size to fix grey tiles issue
                   mapInstance.invalidateSize();
                   
-                  // Fit bounds to all markers
-                  const group = L.featureGroup(mapMarkers);
-                  mapInstance.fitBounds(group.getBounds().pad(0.1), {
-                    animate: false,
-                    duration: 0
-                  });
+                  // Restore saved view if exists, otherwise fit to all markers
+                  if (savedMapView) {
+                    mapInstance.setView(savedMapView.center, savedMapView.zoom, { animate: false });
+                  } else if (mapMarkers.length > 0) {
+                    const group = L.featureGroup(mapMarkers);
+                    mapInstance.fitBounds(group.getBounds().pad(0.1), { animate: false });
+                  }
                 } catch (error) {
                   console.warn('Could not restore map:', error);
                 }
@@ -1784,6 +1805,20 @@
             console.log('🗺️ Map visible');
           } else {
             // Toggle OFF = List visible
+            isMapView = false;
+            
+            // Save current map view before hiding
+            if (mapInstance) {
+              try {
+                savedMapView = {
+                  center: mapInstance.getCenter(),
+                  zoom: mapInstance.getZoom()
+                };
+              } catch (error) {
+                console.warn('Could not save map view:', error);
+              }
+            }
+            
             mapSection.classList.add('list-view-active');
             cardsSection.classList.add('list-view-active');
             
