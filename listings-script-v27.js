@@ -542,8 +542,8 @@ function handleCardScroll() {
       // Re-render cards with animation
       renderPropertyCardsWithAnimation(visibleProperties);
       
-      // Update marker visibility
-      updateMarkerVisibility(visibleProperties);
+      // Update map markers (not just visibility, but actually update markers)
+      updateMapMarkers(visibleProperties);
     }
     
     function renderPropertyCardsWithAnimation(properties) {
