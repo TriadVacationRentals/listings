@@ -104,10 +104,13 @@
         console.log('📦 Total properties from API:', data.properties?.length);
         
         // Filter: only show properties that are live, booking active, and have pricing
+        // Exclude properties with $3000 price (Hostaway default for properties without price)
         allProperties = (data.properties || []).filter(property => {
           return property.isLive && 
                  property.bookingActive && 
-                 (property.priceMin > 0 || property.priceMax > 0);
+                 (property.priceMin > 0 || property.priceMax > 0) &&
+                 property.priceMin !== 3000 &&
+                 property.priceMax !== 3000;
         });
         
         // Debug: Log first property to verify images
