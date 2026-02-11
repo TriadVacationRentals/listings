@@ -2076,7 +2076,7 @@ function handleCardScroll() {
         });
       }
       
-      // Apply search/filters
+     // Apply search/filters
       if (applyBtn) {
         console.log('✅ Mobile apply button found:', applyBtn);
         applyBtn.addEventListener('click', async () => {
@@ -2088,8 +2088,27 @@ function handleCardScroll() {
             return;
           }
           
+          // Add spinner animation style if not already added
+          if (!document.getElementById('mobile-spinner-animation')) {
+            const spinnerStyle = document.createElement('style');
+            spinnerStyle.id = 'mobile-spinner-animation';
+            spinnerStyle.textContent = `
+              @keyframes mobile-spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+              }
+            `;
+            document.head.appendChild(spinnerStyle);
+          }
+          
           // Create loading overlay inside the panel
           const panel = document.querySelector('.mobile-search-panel');
+          
+          if (!panel) {
+            console.error('❌ Mobile panel not found');
+            return;
+          }
+          
           const loadingOverlay = document.createElement('div');
           loadingOverlay.id = 'mobile-loading-overlay';
           loadingOverlay.style.cssText = `
@@ -2103,15 +2122,34 @@ function handleCardScroll() {
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            z-index: 100;
+            z-index: 10000;
             border-radius: 24px 24px 0 0;
           `;
-          loadingOverlay.innerHTML = `
-            <div style="width: 50px; height: 50px; border: 4px solid #e5e7eb; border-top: 4px solid #16A8EE; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-            <p style="margin-top: 16px; font-size: 16px; font-weight: 600; color: #0F2C3A;">Searching properties...</p>
+          
+          const spinner = document.createElement('div');
+          spinner.style.cssText = `
+            width: 50px;
+            height: 50px;
+            border: 4px solid #e5e7eb;
+            border-top: 4px solid #16A8EE;
+            border-radius: 50%;
+            animation: mobile-spin 1s linear infinite;
           `;
           
+          const text = document.createElement('p');
+          text.style.cssText = `
+            margin-top: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #0F2C3A;
+          `;
+          text.textContent = 'Searching properties...';
+          
+          loadingOverlay.appendChild(spinner);
+          loadingOverlay.appendChild(text);
           panel.appendChild(loadingOverlay);
+          
+          console.log('✅ Loading overlay added to panel');
           
           // Sync mobile fields to desktop
           syncMobileToDesktop();
@@ -2121,12 +2159,16 @@ function handleCardScroll() {
             console.log('📱 Running search...');
             await handleSearch();
             
-            // Success - close overlay
+            // Success - close overlay and remove loading
             overlay.classList.remove('active');
-            loadingOverlay.remove();
+            if (loadingOverlay && loadingOverlay.parentNode) {
+              loadingOverlay.remove();
+            }
           } catch (error) {
             // Error - remove loading, show error
-            loadingOverlay.remove();
+            if (loadingOverlay && loadingOverlay.parentNode) {
+              loadingOverlay.remove();
+            }
             alert('Search failed. Please try again.');
             console.error('Search error:', error);
           }
