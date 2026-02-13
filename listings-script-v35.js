@@ -701,17 +701,20 @@ function handleCardScroll() {
       
       if (isNaN(lat) || isNaN(lng)) return null;
       
-      // Create price marker (Airbnb style) - show price range
-      const priceText = (property.priceMin && property.priceMax && property.priceMin !== property.priceMax) 
-        ? `$${property.priceMin}-$${property.priceMax}`
-        : property.priceMax ? `$${property.priceMax}` : 'N/A';
-      
-      const markerIcon = L.divIcon({
-        className: 'custom-marker-wrapper',
-        html: `<div class="custom-marker">${priceText}</div>`,
-        iconSize: [null, 28],
-        iconAnchor: [null, 14]
-      });
+      // Create house icon marker
+const markerIcon = L.divIcon({
+  className: 'custom-marker-wrapper',
+  html: `
+    <div class="custom-marker house-marker">
+      <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+      </svg>
+    </div>
+  `,
+  iconSize: [32, 32],
+  iconAnchor: [16, 32]
+});
       
       // Create popup content with search params
       const params = new URLSearchParams();
