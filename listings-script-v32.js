@@ -1769,15 +1769,17 @@ function updateURLParams(params) {
       const dropdown = document.createElement('div');
       dropdown.id = 'filter-dropdown';
       dropdown.className = 'filter-dropdown';
-      dropdown.style.cssText = `
+      // Desktop vs Mobile styling
+const isMobile = window.innerWidth <= 768;
+
+dropdown.style.cssText = `
   position: absolute;
   top: calc(100% + 8px);
-  left: 0;
-  right: 0;
+  ${isMobile ? 'left: 0; right: 0;' : 'right: 0; width: 360px;'}
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-  max-height: 300px;
+  max-height: ${isMobile ? '300px' : '500px'};
   overflow-y: auto;
   z-index: 10000;
   pointer-events: auto;
