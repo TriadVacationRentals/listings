@@ -4,17 +4,20 @@
     
     const WORKER_URL = 'https://hostaway-proxy.triad-sync.workers.dev';
     
-    // Global state
-    let allProperties = [];
-    let mapInstance = null;
-    let mapMarkers = [];
-    let markerClusterGroup = null; // Global cluster group
-    let isInitialLoad = true; // Track if this is the first load
-    // Infinite scroll for cards
-    let currentCardPage = 0;
-    const CARDS_PER_PAGE = 24;
-    let currentFilteredProperties = []; // Store current filtered list
-    let isLoadingMoreCards = false; // Prevent multiple simultaneous loads
+   // Global state
+let allProperties = [];
+let mapInstance = null;
+let mapMarkers = [];
+let markerClusterGroup = null; // Global cluster group
+let isInitialLoad = true; // Track if this is the first load
+// Infinite scroll for cards
+let currentCardPage = 0;
+const CARDS_PER_PAGE = 24;
+let currentFilteredProperties = []; // Store current filtered list
+let isLoadingMoreCards = false; // Prevent multiple simultaneous loads
+// ✅ NEW: Track if date search is active
+let isDateSearchActive = false;
+let searchResultPropertyIds = []; // Store IDs of properties from search
     
     // Initialize
     async function init() {
@@ -49,37 +52,121 @@
   }
 }
     
-    // ============================================
-    // RESTORE SEARCH STATE FROM URL
-    // ============================================
-    function restoreSearchFromURL() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const location = urlParams.get('location');
-      const placeId = urlParams.get('placeId');
-      
-      if (location && placeId) {
-        console.log('🔄 Restoring location from URL:', location);
-        
-        // Restore selectedLocation object so search button works
-        selectedLocation = {
-          description: location,
-          place_id: placeId
-        };
-        
-        // Fill in the location input (both desktop and mobile)
-        const desktopInput = document.getElementById('location-input');
-        if (desktopInput) {
-          desktopInput.value = location;
-        }
-        
-        const mobileInput = document.getElementById('mobile-location-input');
-        if (mobileInput) {
-          mobileInput.value = location;
-        }
-        
-        console.log('✅ Location restored:', selectedLocation);
-      }
+// RESTORE SEARCH STATE FROM URL
+// ============================================
+function restoreSearchFromURL() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const location = urlParams.get('location');
+  const placeId = urlParams.get('placeId');
+  const checkin = urlParams.get('checkin');
+  const checkout = urlParams.get('checkout');
+  const guests = urlParams.get('guests');
+  
+  let hasSearchParams = false;
+  
+  // ✅ RESTORE LOCATION
+  if (location && placeId) {
+    console.log('🔄 Restoring location from URL:', location);
+    
+    selectedLocation = {
+      description: location,
+      place_id: placeId
+    };
+    
+    // Fill in the location input (both desktop and mobile)
+    const desktopInput = document.getElementById('location-input');
+    if (desktopInput) {
+      desktopInput.value = location;
     }
+    
+    const mobileInput = document.getElementById('mobile-location-input');
+    if (mobileInput) {
+      mobileInput.value = location;
+    }
+    
+    hasSearchParams = true;
+    console.log('✅ Location restored:', selectedLocation);
+  }
+  
+  // ✅ RESTORE DATES
+  if (checkin) {
+    checkinDate = checkin;
+    console.log('✅ Check-in restored:', checkin);
+    
+    // Update desktop display
+    const desktopCheckinDisplay = document.getElementById('checkin-display');
+    if (desktopCheckinDisplay) {
+      const date = new Date(checkin + 'T00:00:00');
+      desktopCheckinDisplay.value = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+    
+    // Update mobile display
+    const mobileCheckinInput = document.getElementById('mobile-checkin-input');
+    if (mobileCheckinInput) {
+      const date = new Date(checkin + 'T00:00:00');
+      mobileCheckinInput.value = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+    
+    hasSearchParams = true;
+  }
+  
+  if (checkout) {
+    checkoutDate = checkout;
+    console.log('✅ Check-out restored:', checkout);
+    
+    // Update desktop display
+    const desktopCheckoutDisplay = document.getElementById('checkout-display');
+    if (desktopCheckoutDisplay) {
+      const date = new Date(checkout + 'T00:00:00');
+      desktopCheckoutDisplay.value = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+    
+    // Update mobile display
+    const mobileCheckoutInput = document.getElementById('mobile-checkout-input');
+    if (mobileCheckoutInput) {
+      const date = new Date(checkout + 'T00:00:00');
+      mobileCheckoutInput.value = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+    
+    hasSearchParams = true;
+  }
+  
+  // ✅ RESTORE GUESTS
+  if (guests) {
+    guestCount = parseInt(guests);
+    console.log('✅ Guests restored:', guestCount);
+    
+    // Update desktop display
+    const desktopGuestsDisplay = document.getElementById('guests-display');
+    if (desktopGuestsDisplay) {
+      desktopGuestsDisplay.value = `${guestCount} ${guestCount === 1 ? 'guest' : 'guests'}`;
+    }
+    
+    // Update mobile display
+    const mobileGuestsInput = document.getElementById('mobile-guests-input');
+    if (mobileGuestsInput) {
+      mobileGuestsInput.value = `${guestCount} ${guestCount === 1 ? 'guest' : 'guests'}`;
+    }
+    
+    // Update mobile guest number display
+    const mobileGuestNumber = document.getElementById('mobile-guest-number');
+    if (mobileGuestNumber) {
+      mobileGuestNumber.textContent = guestCount;
+    }
+    
+    hasSearchParams = true;
+  }
+  
+  // ✅ AUTO-TRIGGER SEARCH if all required params exist
+  if (hasSearchParams && location && placeId) {
+    console.log('🔄 Auto-triggering search from URL params');
+    
+    // Delay to ensure map is initialized
+    setTimeout(() => {
+      handleSearch();
+    }, 1000);
+  }
+}
     
     // Fetch all properties
     async function fetchAllProperties() {
@@ -459,92 +546,101 @@ function handleCardScroll() {
     // PHASE 4: UPDATE CARDS BASED ON MAP VIEWPORT
     // ============================================
     
-    function updateCardsFromMapBounds() {
-      if (!mapInstance) return;
-      
-      // On mobile list view, don't filter by map bounds
-      if (window.innerWidth <= 768) {
-        const mapSection = document.getElementById('map-section');
-        if (mapSection && mapSection.classList.contains('list-view-active')) {
-          console.log('📱 List view active - skipping map bounds filter');
-          return;
-        }
-      }
-      
-      // On initial load, don't filter by viewport - show all properties
-      if (isInitialLoad) {
-        isInitialLoad = false;
-        console.log('📍 Initial load - showing all properties');
-        return; // Properties already rendered in init()
-      }
-      
-      const bounds = mapInstance.getBounds();
-      const center = mapInstance.getCenter();
-      const zoom = mapInstance.getZoom();
-      
-      console.log('🔄 Filtering cards by map viewport and filters...');
-      
-      // Get current filter values
-      const filterPriceMin = document.getElementById('price-min-slider') ? parseInt(document.getElementById('price-min-slider').value) : priceMin;
-      const filterPriceMax = document.getElementById('price-max-slider') ? parseInt(document.getElementById('price-max-slider').value) : priceMax;
-      
-      // Filter properties by viewport AND filters
-      const visibleProperties = allProperties.filter(property => {
-        const lat = parseFloat(property.latitude);
-        const lng = parseFloat(property.longitude);
-        
-        if (isNaN(lat) || isNaN(lng)) return false;
-        
-        // Must be in viewport
-        const isInBounds = bounds.contains([lat, lng]);
-        if (!isInBounds) return false;
-        
-        // Guest capacity filter
-        if (property.guests < guestCount) {
-          return false;
-        }
-        
-        // Price filter
-        if (property.priceMin < filterPriceMin || property.priceMax > filterPriceMax) {
-          return false;
-        }
-        
-        // Property type filter
-        if (selectedPropertyTypes.length > 0 && !selectedPropertyTypes.includes(property.propertyType)) {
-          return false;
-        }
-        
-        // Bedrooms filter
-        if (bedroomsFilter > 0 && property.bedrooms < bedroomsFilter) {
-          return false;
-        }
-        
-        // Beds filter
-        if (bedsFilter > 0 && property.beds < bedsFilter) {
-          return false;
-        }
-        
-        // Bathrooms filter
-        if (bathroomsFilter > 0 && property.bathrooms < bathroomsFilter) {
-          return false;
-        }
-        
-        // Pets filter
-        if (petsAllowedFilter && !property.petsAllowed) {
-          return false;
-        }
-        
-        return true;
-      });
-      
-      console.log(`📊 ${visibleProperties.length} of ${allProperties.length} properties match filters`);
-      
-      // Re-render cards with animation
-      renderPropertyCardsWithAnimation(visibleProperties);
-      
-      // Update map markers (not just visibility, but actually update markers)
-      updateMapMarkers(visibleProperties);
+   function updateCardsFromMapBounds() {
+  if (!mapInstance) return;
+  
+  // On initial load, don't filter by viewport - show all properties
+  if (isInitialLoad) {
+    isInitialLoad = false;
+    console.log('📍 Initial load - showing all properties');
+    return; // Properties already rendered in init()
+  }
+  
+  // ✅ NEW: If date search is active, don't update from map bounds
+  if (isDateSearchActive) {
+    console.log('🔒 Date search active - ignoring map movement');
+    return;
+  }
+  
+  const bounds = mapInstance.getBounds();
+  const center = mapInstance.getCenter();
+  const zoom = mapInstance.getZoom();
+  
+  // ✅ FIXED: Check if mobile list view is active
+  const isMobileListView = window.innerWidth <= 768 && 
+                           document.getElementById('map-section')?.classList.contains('list-view-active');
+  
+  if (isMobileListView) {
+    console.log('📱 List view active - applying filters without map bounds');
+  } else {
+    console.log('🔄 Filtering cards by map viewport and filters...');
+  }
+  
+  // Get current filter values
+  const filterPriceMin = document.getElementById('price-min-slider') ? parseInt(document.getElementById('price-min-slider').value) : priceMin;
+  const filterPriceMax = document.getElementById('price-max-slider') ? parseInt(document.getElementById('price-max-slider').value) : priceMax;
+  
+  // Filter properties by viewport AND filters
+  const visibleProperties = allProperties.filter(property => {
+    const lat = parseFloat(property.latitude);
+    const lng = parseFloat(property.longitude);
+    
+    if (isNaN(lat) || isNaN(lng)) return false;
+    
+    // ✅ FIXED: Only check viewport bounds if NOT in mobile list view
+    if (!isMobileListView) {
+      const isInBounds = bounds.contains([lat, lng]);
+      if (!isInBounds) return false;
     }
+    
+    // Guest capacity filter
+    if (property.guests < guestCount) {
+      return false;
+    }
+    
+    // Price filter
+    if (property.priceMin < filterPriceMin || property.priceMax > filterPriceMax) {
+      return false;
+    }
+    
+    // Property type filter
+    if (selectedPropertyTypes.length > 0 && !selectedPropertyTypes.includes(property.propertyType)) {
+      return false;
+    }
+    
+    // Bedrooms filter
+    if (bedroomsFilter > 0 && property.bedrooms < bedroomsFilter) {
+      return false;
+    }
+    
+    // Beds filter
+    if (bedsFilter > 0 && property.beds < bedsFilter) {
+      return false;
+    }
+    
+    // Bathrooms filter
+    if (bathroomsFilter > 0 && property.bathrooms < bathroomsFilter) {
+      return false;
+    }
+    
+    // Pets filter
+    if (petsAllowedFilter && !property.petsAllowed) {
+      return false;
+    }
+    
+    return true;
+  });
+  
+  console.log(`📊 ${visibleProperties.length} of ${allProperties.length} properties match filters`);
+  
+  // Re-render cards with animation
+  renderPropertyCardsWithAnimation(visibleProperties);
+  
+  // ✅ FIXED: Only update map markers if not in mobile list view
+  if (!isMobileListView) {
+    updateMapMarkers(visibleProperties);
+  }
+}
     
     function renderPropertyCardsWithAnimation(properties) {
   const container = document.getElementById('cards-container');
@@ -701,13 +797,19 @@ function handleCardScroll() {
       setupDatePickers();
       
       // Guest selector
-      setupGuestSelector();
-      
-      // Search button
-      document.getElementById('search-btn').addEventListener('click', handleSearch);
-      
-      console.log('✅ Search bar ready');
-    }
+  setupGuestSelector();
+  
+  // Search button
+  document.getElementById('search-btn').addEventListener('click', handleSearch);
+  
+  // ✅ NEW: Clear search button
+  const clearSearchBtn = document.getElementById('clear-search-btn');
+  if (clearSearchBtn) {
+    clearSearchBtn.addEventListener('click', clearSearch);
+  }
+  
+  console.log('✅ Search bar ready');
+}
     
     // ============================================
     // LOCATION SEARCH
@@ -1241,6 +1343,18 @@ function handleCardScroll() {
         renderPropertyCards(finalProperties);
         updateMapMarkers(finalProperties);
         
+        // ✅ NEW: Set search active flag if dates were used
+        if (searchParams.checkin && searchParams.checkout) {
+          isDateSearchActive = true;
+          searchResultPropertyIds = finalProperties.map(p => p.listingId);
+          showClearSearchButton();
+          console.log('🔒 Date search active - results locked to', searchResultPropertyIds.length, 'properties');
+        } else {
+          isDateSearchActive = false;
+          searchResultPropertyIds = [];
+          hideClearSearchButton();
+        }
+        
         // Update URL with search params (optional - for sharing)
         updateURLParams(searchParams);
         
@@ -1270,6 +1384,82 @@ function handleCardScroll() {
         console.error('❌ Search error:', error);
         showErrorState('Search failed. Please try again.');
       }
+    }
+    
+    // ============================================
+    // CLEAR SEARCH BUTTON FUNCTIONS
+    // ============================================
+    
+    function showClearSearchButton() {
+      const clearBtn = document.getElementById('clear-search-btn');
+      if (clearBtn) {
+        clearBtn.style.display = 'flex';
+      }
+    }
+    
+    function hideClearSearchButton() {
+      const clearBtn = document.getElementById('clear-search-btn');
+      if (clearBtn) {
+        clearBtn.style.display = 'none';
+      }
+    }
+    
+    function clearSearch() {
+      console.log('🧹 Clearing search...');
+      
+      // Reset flags
+      isDateSearchActive = false;
+      searchResultPropertyIds = [];
+      
+      // Clear search inputs
+      selectedLocation = null;
+      checkinDate = null;
+      checkoutDate = null;
+      guestCount = 1;
+      
+      // Clear desktop inputs
+      const locationInput = document.getElementById('location-input');
+      const checkinDisplay = document.getElementById('checkin-display');
+      const checkoutDisplay = document.getElementById('checkout-display');
+      const guestsDisplay = document.getElementById('guests-display');
+      
+      if (locationInput) locationInput.value = '';
+      if (checkinDisplay) checkinDisplay.value = 'Add date';
+      if (checkoutDisplay) checkoutDisplay.value = 'Add date';
+      if (guestsDisplay) guestsDisplay.value = '1 guest';
+      
+      // Clear mobile inputs
+      const mobileLocationInput = document.getElementById('mobile-location-input');
+      const mobileCheckinInput = document.getElementById('mobile-checkin-input');
+      const mobileCheckoutInput = document.getElementById('mobile-checkout-input');
+      const mobileGuestsInput = document.getElementById('mobile-guests-input');
+      const mobileGuestNumber = document.getElementById('mobile-guest-number');
+      
+      if (mobileLocationInput) mobileLocationInput.value = '';
+      if (mobileCheckinInput) mobileCheckinInput.value = '';
+      if (mobileCheckoutInput) mobileCheckoutInput.value = '';
+      if (mobileGuestsInput) mobileGuestsInput.value = '1 guest';
+      if (mobileGuestNumber) mobileGuestNumber.textContent = '1';
+      
+      // Clear URL params
+      const url = new URL(window.location);
+      url.search = '';
+      window.history.pushState({}, '', url);
+      
+      // Hide clear button
+      hideClearSearchButton();
+      
+      // Show all properties again
+      renderPropertyCards(allProperties);
+      updateMapMarkers(allProperties);
+      
+      // Reset map to show all properties
+      if (mapInstance && mapMarkers.length > 0) {
+        const group = L.featureGroup(mapMarkers);
+        mapInstance.fitBounds(group.getBounds().pad(0.1));
+      }
+      
+      console.log('✅ Search cleared - showing all', allProperties.length, 'properties');
     }
     
     // Helper: Calculate distance between two points (Haversine formula)
@@ -1364,15 +1554,16 @@ function handleCardScroll() {
       });
     }
     
-    // Update URL with search parameters
-    function updateURLParams(params) {
-      const url = new URL(window.location);
-      url.searchParams.set('location', params.location);
-      if (params.checkin) url.searchParams.set('checkin', params.checkin);
-      if (params.checkout) url.searchParams.set('checkout', params.checkout);
-      url.searchParams.set('guests', params.guests);
-      window.history.pushState({}, '', url);
-    }
+   // Update URL with search parameters
+function updateURLParams(params) {
+  const url = new URL(window.location);
+  url.searchParams.set('location', params.location);
+  if (params.placeId) url.searchParams.set('placeId', params.placeId); // ✅ ADDED
+  if (params.checkin) url.searchParams.set('checkin', params.checkin);
+  if (params.checkout) url.searchParams.set('checkout', params.checkout);
+  url.searchParams.set('guests', params.guests);
+  window.history.pushState({}, '', url);
+}
     
     // Show loading state with skeleton cards
     function showLoadingState() {
@@ -1600,10 +1791,10 @@ function handleCardScroll() {
           </div>
         </div>
         
-        <!-- Actions -->
+       <!-- Actions -->
         <div style="display: flex; gap: 12px; align-items: center;">
           <button id="clear-filters" style="padding: 10px 16px; border: none; border-radius: 12px; background: transparent; color: #0F2C3A; font-size: 14px; font-weight: 500; cursor: pointer; font-family: 'Manrope', sans-serif; text-decoration: underline;">Clear all</button>
-          <button id="apply-filters" style="flex: 1; padding: 14px 32px; border: none; border-radius: 12px; background: #0F2C3A; color: white; font-size: 16px; font-weight: 600; cursor: pointer; font-family: 'Manrope', sans-serif;">Show properties</button>
+          <button id="apply-filters" style="flex: 1; padding: 14px 32px; border: none; border-radius: 12px; background: #0F2C3A; color: white; font-size: 16px; font-weight: 600; cursor: pointer; font-family: 'Manrope', sans-serif;">Apply filters</button>
         </div>
       `;
       
@@ -2306,14 +2497,6 @@ function toggleMobileCalendar() {
   const calWrapper = document.getElementById('mobile-calendar-wrapper');
   const guestPopup = document.getElementById('mobile-guest-popup');
   
-  // Get BOTH date input fields directly
-  const checkinInput = document.getElementById('mobile-checkin-input');
-  const checkoutInput = document.getElementById('mobile-checkout-input');
-  
-  // Get their parent containers
-  const checkinParent = checkinInput?.closest('.mobile-search-field-group');
-  const checkoutParent = checkoutInput?.closest('.mobile-search-field-group');
-  
   // Hide guest popup
   if (guestPopup) guestPopup.classList.remove('active');
   
@@ -2321,15 +2504,35 @@ function toggleMobileCalendar() {
   if (calWrapper.classList.contains('active')) {
     // Closing calendar - show date fields again
     calWrapper.classList.remove('active');
-    if (checkinParent) checkinParent.style.display = 'flex'; // ✅ Changed from 'block'
-    if (checkoutParent) checkoutParent.style.display = 'flex'; // ✅ Changed from 'block'
+    showMobileDateFields(); // ✅ NEW: Use helper function
   } else {
     // Opening calendar - hide date fields, show calendar
     calWrapper.classList.add('active');
-    if (checkinParent) checkinParent.style.display = 'none';
-    if (checkoutParent) checkoutParent.style.display = 'none';
+    hideMobileDateFields(); // ✅ NEW: Use helper function
     renderMobileCalendar();
   }
+}
+
+// ✅ NEW: Helper function to show date fields
+function showMobileDateFields() {
+  const checkinInput = document.getElementById('mobile-checkin-input');
+  const checkoutInput = document.getElementById('mobile-checkout-input');
+  const checkinParent = checkinInput?.closest('.mobile-search-field-group');
+  const checkoutParent = checkoutInput?.closest('.mobile-search-field-group');
+  
+  if (checkinParent) checkinParent.style.display = 'flex';
+  if (checkoutParent) checkoutParent.style.display = 'flex';
+}
+
+// ✅ NEW: Helper function to hide date fields
+function hideMobileDateFields() {
+  const checkinInput = document.getElementById('mobile-checkin-input');
+  const checkoutInput = document.getElementById('mobile-checkout-input');
+  const checkinParent = checkinInput?.closest('.mobile-search-field-group');
+  const checkoutParent = checkoutInput?.closest('.mobile-search-field-group');
+  
+  if (checkinParent) checkinParent.style.display = 'none';
+  if (checkoutParent) checkoutParent.style.display = 'none';
 }
     
     function toggleMobileGuests() {
@@ -2449,13 +2652,14 @@ function toggleMobileCalendar() {
       calWrapper.innerHTML = calendarHTML;
     }
     
-    function changeCalendarMonth(delta) {
-      if (!currentCheckinMonth) currentCheckinMonth = new Date();
-      currentCheckinMonth.setMonth(currentCheckinMonth.getMonth() + delta);
-      renderMobileCalendar();
-    }
-    
-    function selectMobileDate(dateStr) {
+    // ✅ FIXED: Make functions globally accessible for inline onclick handlers
+window.changeCalendarMonth = function(delta) {
+  if (!currentCheckinMonth) currentCheckinMonth = new Date();
+  currentCheckinMonth.setMonth(currentCheckinMonth.getMonth() + delta);
+  renderMobileCalendar();
+}
+
+window.selectMobileDate = function(dateStr) {
   if (!checkinDate) {
     // Selecting check-in
     checkinDate = dateStr;
@@ -2474,18 +2678,15 @@ function toggleMobileCalendar() {
     console.log('✅ Check-out selected:', checkoutDate);
     syncOverlayFields(); // Update input displays
     
-    // CLOSE calendar and show date fields again
+   // CLOSE calendar and show date fields again
     const calWrapper = document.getElementById('mobile-calendar-wrapper');
-    const checkinParent = document.getElementById('mobile-checkin-input')?.closest('.mobile-search-field-group');
-    const checkoutParent = document.getElementById('mobile-checkout-input')?.closest('.mobile-search-field-group');
     
     if (calWrapper) {
       calWrapper.classList.remove('active');
     }
     
-    // Show date field groups again with flex
-    if (checkinParent) checkinParent.style.display = 'flex'; // ✅ Changed from 'block'
-    if (checkoutParent) checkoutParent.style.display = 'flex'; // ✅ Changed from 'block'
+    // Show date field groups again
+    showMobileDateFields(); // ✅ FIXED: Use helper function
   } else {
     // Both already selected, start over
     checkinDate = dateStr;
@@ -2495,72 +2696,110 @@ function toggleMobileCalendar() {
     syncOverlayFields();
   }
 }
-    
-    function clearMobileDates() {
-      checkinDate = null;
-      checkoutDate = null;
-      renderMobileCalendar();
-      syncOverlayFields();
-    }
+
+window.clearMobileDates = function() {
+  checkinDate = null;
+  checkoutDate = null;
+  renderMobileCalendar();
+  syncOverlayFields();
+}
     
     function pad(n) {
       return String(n).padStart(2, '0');
     }
     
     function showMobileLocationDropdown(predictions) {
-      // Reuse desktop location dropdown logic
-      const existingDropdown = document.querySelector('.location-dropdown');
-      if (existingDropdown) existingDropdown.remove();
-      
-      if (predictions.length === 0) return;
-      
-      const dropdown = document.createElement('div');
-      dropdown.className = 'location-dropdown';
-      dropdown.style.cssText = `
-        position: fixed;
-        left: 20px;
-        right: 20px;
-        top: 50%;
-        transform: translateY(-50%);
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-        max-height: 400px;
-        overflow-y: auto;
-        z-index: 2001;
-      `;
-      
-      predictions.forEach(prediction => {
-        const option = document.createElement('div');
-        option.className = 'location-option';
-        option.textContent = prediction.description;
-        option.style.cssText = `
-          padding: 12px 16px;
-          cursor: pointer;
-          border-bottom: 1px solid #f0f0f0;
-        `;
-        
-        option.addEventListener('click', () => {
-          selectedLocation = prediction;
-          document.getElementById('mobile-location-input').value = prediction.description;
-          dropdown.remove();
-        });
-        
-        dropdown.appendChild(option);
-      });
-      
-      document.body.appendChild(dropdown);
-      
-      // Close on background click
-      setTimeout(() => {
-        document.addEventListener('click', function closeDropdown(e) {
-          if (!dropdown.contains(e.target) && e.target.id !== 'mobile-location-input') {
-            dropdown.remove();
-            document.removeEventListener('click', closeDropdown);
-          }
-        });
-      }, 100);
-    }
+  // Remove existing dropdown
+  const existingDropdown = document.querySelector('.location-dropdown');
+  if (existingDropdown) existingDropdown.remove();
+  
+  if (predictions.length === 0) return;
+  
+  // ✅ FIXED: Get input field position
+  const input = document.getElementById('mobile-location-input');
+  if (!input) return;
+  
+  const inputRect = input.getBoundingClientRect();
+  
+  const dropdown = document.createElement('div');
+  dropdown.className = 'location-dropdown';
+  dropdown.style.cssText = `
+    position: fixed;
+    left: 20px;
+    right: 20px;
+    top: ${inputRect.bottom + 8}px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 2100;
+  `;
+  
+  predictions.forEach(prediction => {
+    const option = document.createElement('div');
+    option.className = 'location-option';
+    option.textContent = prediction.description;
+    option.style.cssText = `
+      padding: 14px 16px;
+      cursor: pointer;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 15px;
+      transition: background 0.15s;
+    `;
+    
+    // ✅ ADDED: Hover effect
+    option.addEventListener('mouseenter', () => {
+      option.style.background = '#f5f5f5';
+    });
+    option.addEventListener('mouseleave', () => {
+      option.style.background = 'white';
+    });
+    
+    option.addEventListener('click', (e) => {
+      e.stopPropagation();
+      selectedLocation = prediction;
+      const mobileInput = document.getElementById('mobile-location-input');
+      if (mobileInput) {
+        mobileInput.value = prediction.description;
+      }
+      dropdown.remove();
+      console.log('✅ Mobile location selected:', prediction.description);
+    });
+    
+    dropdown.appendChild(option);
+  });
+  
+  document.body.appendChild(dropdown);
+  
+  // ✅ FIXED: Update position when overlay scrolls
+  const overlay = document.getElementById('mobile-search-overlay');
+  const overlayContent = document.querySelector('.mobile-search-content');
+  
+  if (overlayContent) {
+    const scrollHandler = () => {
+      const newInputRect = input.getBoundingClientRect();
+      dropdown.style.top = `${newInputRect.bottom + 8}px`;
+    };
+    overlayContent.addEventListener('scroll', scrollHandler);
+    
+    // Clean up scroll listener when dropdown is removed
+    dropdown.addEventListener('remove', () => {
+      overlayContent.removeEventListener('scroll', scrollHandler);
+    });
+  }
+  
+  // Close on background click
+  setTimeout(() => {
+    const closeHandler = (e) => {
+      if (!dropdown.contains(e.target) && e.target.id !== 'mobile-location-input') {
+        dropdown.remove();
+        document.removeEventListener('click', closeHandler);
+      }
+    };
+    document.addEventListener('click', closeHandler);
+  }, 100);
+}
     
     function syncMobileToDesktop() {
       // Sync location
