@@ -706,10 +706,10 @@ function handleCardScroll() {
     className: 'custom-marker-wrapper',
     html: `
       <div class="custom-marker house-marker" style="
-        width: 40px;
-        height: 40px;
+        width: 32px;
+        height: 32px;
         background: white;
-        border: 2px solid #0F2C3A;
+        border: 1px solid #0F2C3A;
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -719,9 +719,9 @@ function handleCardScroll() {
         transition: all 0.2s ease;
         padding: 0;
       ">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="
-          width: 26px;
-          height: 26px;
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="
+          width: 22px;
+          height: 22px;
           color: #0F2C3A;
           display: block;
         ">
