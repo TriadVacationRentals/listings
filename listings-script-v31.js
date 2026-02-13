@@ -809,13 +809,25 @@ function handleCardScroll() {
   }
   
   // ✅ NEW: Show location clear button if location input has value
-  const locationInput = document.getElementById('location-input');
-  const locationClearBtn = document.getElementById('location-clear-btn');
-  if (locationInput && locationClearBtn && locationInput.value.trim().length > 0) {
+const locationInput = document.getElementById('location-input');
+const locationClearBtn = document.getElementById('location-clear-btn');
+console.log('🔍 Checking location clear button on load:');
+console.log('  - Location input:', locationInput);
+console.log('  - Clear button:', locationClearBtn);
+console.log('  - Input value:', locationInput?.value);
+
+if (locationInput && locationClearBtn) {
+  if (locationInput.value.trim().length > 0) {
     locationClearBtn.style.display = 'block';
+    console.log('  ✅ Showing clear button (input has text)');
+  } else {
+    console.log('  ℹ️ Input empty, button stays hidden');
   }
-  
-  console.log('✅ Search bar ready');
+} else {
+  console.error('  ❌ Element not found!');
+}
+
+console.log('✅ Search bar ready');
 }
     
     // ============================================
@@ -891,60 +903,85 @@ function handleCardScroll() {
     }
     
     function displayLocationSuggestions(predictions) {
-      const dropdown = document.createElement('div');
-      dropdown.id = 'location-dropdown';
-      dropdown.className = 'location-dropdown active';
-      dropdown.style.cssText = `
-        position: absolute;
-        top: calc(100% + 8px);
-        left: 0;
-        right: 0;
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-        max-height: 300px;
-        overflow-y: auto;
-        z-index: 1000;
-      `;
+  const dropdown = document.createElement('div');
+  dropdown.id = 'location-dropdown';
+  dropdown.className = 'location-dropdown active';
+  
+  // Position it below the input field
+  const fieldRect = document.getElementById('location-field').getBoundingClientRect();
+  
+  dropdown.style.cssText = `
+    position: fixed;
+    top: ${fieldRect.bottom + 8}px;
+    left: ${fieldRect.left}px;
+    width: ${fieldRect.width}px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 99999;
+  `;
+  
+  dropdown.innerHTML = predictions.map(p => `
+    <div class="location-dropdown-item" data-place-id="${p.place_id}" style="
+      padding: 14px 20px;
+      cursor: pointer;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+      transition: background 0.15s;
+    ">
+      ${p.description}
+    </div>
+  `).join('');
+  
+  // Remove old dropdown if exists
+  const oldDropdown = document.getElementById('location-dropdown');
+  if (oldDropdown) oldDropdown.remove();
+  
+  // Add to body (NOT to location-field)
+  document.body.appendChild(dropdown);
+  
+  // Add click handlers
+  dropdown.querySelectorAll('.location-dropdown-item').forEach(item => {
+    item.addEventListener('mouseenter', function() {
+      this.style.background = '#f5f5f5';
+    });
+    item.addEventListener('mouseleave', function() {
+      this.style.background = 'white';
+    });
+    item.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const locationInput = document.getElementById('location-input');
+      const locationClearBtn = document.getElementById('location-clear-btn');
       
-      dropdown.innerHTML = predictions.map(p => `
-        <div class="location-dropdown-item" data-place-id="${p.place_id}" style="
-          padding: 14px 20px;
-          cursor: pointer;
-          border-bottom: 1px solid #f0f0f0;
-          font-size: 14px;
-          transition: background 0.15s;
-        ">
-          ${p.description}
-        </div>
-      `).join('');
+      locationInput.value = this.textContent.trim();
+      selectedLocation = {
+        description: this.textContent.trim(),
+        place_id: this.dataset.placeId
+      };
       
-      // Remove old dropdown if exists
-      const oldDropdown = document.getElementById('location-dropdown');
-      if (oldDropdown) oldDropdown.remove();
+      // Show clear button when location is selected
+      if (locationClearBtn) {
+        locationClearBtn.style.display = 'block';
+        console.log('✅ Location selected - showing clear button');
+      }
       
-      // Add new dropdown
-      document.getElementById('location-field').appendChild(dropdown);
-      
-      // Add click handlers
-      dropdown.querySelectorAll('.location-dropdown-item').forEach(item => {
-        item.addEventListener('mouseenter', function() {
-          this.style.background = '#f5f5f5';
-        });
-        item.addEventListener('mouseleave', function() {
-          this.style.background = 'white';
-        });
-        item.addEventListener('click', function(e) {
-          e.stopPropagation();
-          document.getElementById('location-input').value = this.textContent.trim();
-          selectedLocation = {
-            description: this.textContent.trim(),
-            place_id: this.dataset.placeId
-          };
-          hideLocationDropdown();
-        });
-      });
-    }
+      hideLocationDropdown();
+    });
+  });
+  
+  // Close on outside click
+  setTimeout(() => {
+    const closeHandler = (e) => {
+      if (!dropdown.contains(e.target) && !e.target.closest('#location-field')) {
+        hideLocationDropdown();
+        document.removeEventListener('click', closeHandler);
+      }
+    };
+    document.addEventListener('click', closeHandler);
+  }, 100);
+}
     
     function hideLocationDropdown() {
       const dropdown = document.getElementById('location-dropdown');
@@ -2409,33 +2446,59 @@ function updateURLParams(params) {
       }
       
       // Clear all
-      if (clearBtn) {
-        clearBtn.addEventListener('click', () => {
-          // Clear search fields
-          selectedLocation = null;
-          checkinDate = null;
-          checkoutDate = null;
-          guestCount = 1;
-          
-          // Clear desktop inputs
-          const locationInput = document.getElementById('location-input');
-          if (locationInput) locationInput.value = '';
-          
-          const checkinDisplay = document.getElementById('checkin-display');
-          const checkoutDisplay = document.getElementById('checkout-display');
-          const guestsDisplay = document.getElementById('guests-display');
-          
-          if (checkinDisplay) checkinDisplay.value = 'Add date';
-          if (checkoutDisplay) checkoutDisplay.value = 'Add date';
-          if (guestsDisplay) guestsDisplay.value = '1 guest';
-          
-          // Clear filters
-          const clearFiltersBtn = document.querySelector('#mobile-filters-container #clear-filters');
-          if (clearFiltersBtn) clearFiltersBtn.click();
-          
-          syncOverlayFields();
-        });
-      }
+if (clearBtn) {
+  clearBtn.addEventListener('click', () => {
+    console.log('📱 Mobile clear all clicked');
+    
+    // Clear search fields
+    selectedLocation = null;
+    checkinDate = null;
+    checkoutDate = null;
+    guestCount = 1;
+    
+    // Clear desktop inputs
+    const locationInput = document.getElementById('location-input');
+    const locationClearBtn = document.getElementById('location-clear-btn');
+    if (locationInput) {
+      locationInput.value = '';
+      console.log('✅ Cleared desktop location input');
+    }
+    if (locationClearBtn) {
+      locationClearBtn.style.display = 'none';
+    }
+    
+    const checkinDisplay = document.getElementById('checkin-display');
+    const checkoutDisplay = document.getElementById('checkout-display');
+    const guestsDisplay = document.getElementById('guests-display');
+    
+    if (checkinDisplay) checkinDisplay.value = 'Add date';
+    if (checkoutDisplay) checkoutDisplay.value = 'Add date';
+    if (guestsDisplay) guestsDisplay.value = '1 guest';
+    
+    // ✅ NEW: Clear mobile inputs too
+    const mobileLocationInput = document.getElementById('mobile-location-input');
+    if (mobileLocationInput) {
+      mobileLocationInput.value = '';
+      console.log('✅ Cleared mobile location input');
+    }
+    
+    const mobileCheckinInput = document.getElementById('mobile-checkin-input');
+    const mobileCheckoutInput = document.getElementById('mobile-checkout-input');
+    const mobileGuestsInput = document.getElementById('mobile-guests-input');
+    const mobileGuestNumber = document.getElementById('mobile-guest-number');
+    
+    if (mobileCheckinInput) mobileCheckinInput.value = '';
+    if (mobileCheckoutInput) mobileCheckoutInput.value = '';
+    if (mobileGuestsInput) mobileGuestsInput.value = '1 guest';
+    if (mobileGuestNumber) mobileGuestNumber.textContent = '1';
+    
+    // Clear filters
+    const clearFiltersBtn = document.querySelector('#mobile-filters-container #clear-filters');
+    if (clearFiltersBtn) clearFiltersBtn.click();
+    
+    syncOverlayFields();
+  });
+}
       
       // Setup mobile input fields
       setupMobileInputs();
@@ -2916,12 +2979,14 @@ window.clearMobileDates = function() {
         if (container.children.length === 0) {
           console.log('📱 Cloning filter dropdown to mobile...');
           const clone = filterDropdown.cloneNode(true);
-          clone.style.display = 'block';
-          clone.style.position = 'relative';
-          clone.style.width = '100%';
-          clone.style.boxShadow = 'none';
-          clone.style.padding = '0';
-          clone.id = 'mobile-filter-dropdown';
+            clone.style.display = 'block';
+            clone.style.position = 'relative';
+            clone.style.width = '100%';
+            clone.style.boxShadow = 'none';
+            clone.style.padding = '0';
+            clone.style.maxHeight = 'none'; // ✅ REMOVE HEIGHT LIMIT
+            clone.style.overflow = 'visible'; // ✅ NO SCROLL
+            clone.id = 'mobile-filter-dropdown';
           
           console.log('📱 Clone created:', clone);
           
