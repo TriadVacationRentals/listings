@@ -717,6 +717,7 @@ function handleCardScroll() {
         box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         cursor: pointer;
         transition: all 0.2s ease;
+        padding: 0;
       ">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="
           width: 32px;
