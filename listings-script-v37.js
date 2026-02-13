@@ -719,8 +719,8 @@ const markerIcon = L.divIcon({
       transition: all 0.2s ease;
     ">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="
-        width: 20px;
-        height: 20px;
+        width: 30px;
+        height: 30px;
         color: #0F2C3A;
       ">
         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
