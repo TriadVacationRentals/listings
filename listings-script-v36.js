@@ -696,25 +696,41 @@ function handleCardScroll() {
     }
     
     function createPropertyMarker(property) {
-      const lat = parseFloat(property.latitude);
-      const lng = parseFloat(property.longitude);
-      
-      if (isNaN(lat) || isNaN(lng)) return null;
-      
-      // Create house icon marker
-const markerIcon = L.divIcon({
-  className: 'custom-marker-wrapper',
-  html: `
-    <div class="custom-marker house-marker">
-      <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-        <polyline points="9 22 9 12 15 12 15 22"></polyline>
-      </svg>
-    </div>
-  `,
-  iconSize: [32, 32],
-  iconAnchor: [16, 32]
-});
+  const lat = parseFloat(property.latitude);
+  const lng = parseFloat(property.longitude);
+  
+  if (isNaN(lat) || isNaN(lng)) return null;
+  
+  // Create house icon marker
+  const markerIcon = L.divIcon({
+    className: 'custom-marker-wrapper',
+    html: `
+      <div class="custom-marker house-marker" style="
+        width: 36px;
+        height: 36px;
+        background: white;
+        border: 2px solid #0F2C3A;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        cursor: pointer;
+        transition: all 0.2s ease;
+      ">
+        <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" style="
+          width: 20px;
+          height: 20px;
+          color: #0F2C3A;
+        ">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+      </div>
+    `,
+    iconSize: [36, 36],
+    iconAnchor: [18, 36]
+  });
       
       // Create popup content with search params
       const params = new URLSearchParams();
@@ -744,18 +760,71 @@ const markerIcon = L.divIcon({
       `;
       
       // Create marker
-      const marker = L.marker([lat, lng], {
-        icon: markerIcon,
-        listingId: property.listingId
-      })
-      .bindPopup(popupContent, {
-        maxWidth: 280,
-        minWidth: 280,
-        className: 'custom-popup'
-      });
-      
-      mapMarkers.push(marker);
-      return marker;
+const marker = L.marker([lat, lng], {
+  icon: markerIcon,
+  listingId: property.listingId
+})
+.bindPopup(popupContent, {
+  maxWidth: 280,
+  minWidth: 280,
+  className: 'custom-popup'
+});
+
+// Add hover effects
+marker.on('mouseover', function(e) {
+  const markerElement = e.target.getElement();
+  if (markerElement) {
+    const houseMarker = markerElement.querySelector('.house-marker');
+    const svg = markerElement.querySelector('svg');
+    if (houseMarker && svg) {
+      houseMarker.style.transform = 'scale(1.15)';
+      houseMarker.style.boxShadow = '0 4px 12px rgba(0,0,0,0.25)';
+    }
+  }
+});
+
+marker.on('mouseout', function(e) {
+  const markerElement = e.target.getElement();
+  if (markerElement) {
+    const houseMarker = markerElement.querySelector('.house-marker');
+    const svg = markerElement.querySelector('svg');
+    if (houseMarker && svg) {
+      houseMarker.style.transform = 'scale(1)';
+      houseMarker.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)';
+    }
+  }
+});
+
+marker.on('popupopen', function(e) {
+  const markerElement = e.target.getElement();
+  if (markerElement) {
+    const houseMarker = markerElement.querySelector('.house-marker');
+    const svg = markerElement.querySelector('svg');
+    if (houseMarker && svg) {
+      // Active state: dark background, white icon
+      houseMarker.style.background = '#0F2C3A';
+      houseMarker.style.borderColor = '#0F2C3A';
+      svg.style.color = 'white';
+    }
+  }
+});
+
+marker.on('popupclose', function(e) {
+  const markerElement = e.target.getElement();
+  if (markerElement) {
+    const houseMarker = markerElement.querySelector('.house-marker');
+    const svg = markerElement.querySelector('svg');
+    if (houseMarker && svg) {
+      // Reset to default: white background, dark icon
+      houseMarker.style.background = 'white';
+      houseMarker.style.borderColor = '#0F2C3A';
+      svg.style.color = '#0F2C3A';
+    }
+  }
+});
+
+mapMarkers.push(marker);
+return marker;
     }
     
     // Update map markers based on filtered properties
