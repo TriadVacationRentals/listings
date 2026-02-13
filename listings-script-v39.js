@@ -705,24 +705,26 @@ function handleCardScroll() {
 const markerIcon = L.divIcon({
   className: 'custom-marker-wrapper',
   html: `
-    <div class="custom-marker house-marker" style="
-      width: 36px;
-      height: 36px;
-      background: white;
-      border: 2px solid #0F2C3A;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-      cursor: pointer;
-      transition: all 0.2s ease;
+    html: `
+  <div class="custom-marker house-marker" style="
+    width: 40px;
+    height: 40px;
+    background: white;
+    border: 2px solid #0F2C3A;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  ">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="
+      width: 30px;
+      height: 30px;
+      color: #0F2C3A;
+      display: block;
     ">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="
-        width: 30px;
-        height: 30px;
-        color: #0F2C3A;
-      ">
         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
         <polyline points="9 22 9 12 15 12 15 22"></polyline>
       </svg>
