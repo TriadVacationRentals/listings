@@ -158,7 +158,7 @@
 .listings-wrapper .search-field-inner {
   display: flex;
   align-items: center;
-  gap: 0;
+  gap: 8px;
   width: 100%;
 }
 
