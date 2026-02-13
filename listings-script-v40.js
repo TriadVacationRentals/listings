@@ -729,7 +729,6 @@ const markerIcon = L.divIcon({
         <polyline points="9 22 9 12 15 12 15 22"></polyline>
       </svg>
     </div>
-  `,
   iconSize: [36, 36],
   iconAnchor: [18, 36]
 });
