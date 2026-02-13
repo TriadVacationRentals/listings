@@ -1802,7 +1802,6 @@ if (isMobile) {
     display: none;
   `;
 }
-`;
       
       // Set initial price range based on actual properties
       const actualMinPrice = allProperties.length > 0 
