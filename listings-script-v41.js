@@ -702,131 +702,129 @@ function handleCardScroll() {
   if (isNaN(lat) || isNaN(lng)) return null;
   
   // Create house icon marker (same as property cards)
-const markerIcon = L.divIcon({
-  className: 'custom-marker-wrapper',
-  html: `
+  const markerIcon = L.divIcon({
+    className: 'custom-marker-wrapper',
     html: `
-  <div class="custom-marker house-marker" style="
-    width: 40px;
-    height: 40px;
-    background: white;
-    border: 2px solid #0F2C3A;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    cursor: pointer;
-    transition: all 0.2s ease;
-  ">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="
-      width: 30px;
-      height: 30px;
-      color: #0F2C3A;
-      display: block;
-    ">
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-        <polyline points="9 22 9 12 15 12 15 22"></polyline>
-      </svg>
-    </div>
-  iconSize: [36, 36],
-  iconAnchor: [18, 36]
-});
-      
-      // Create popup content with search params
-      const params = new URLSearchParams();
-      if (checkinDate) params.append('checkin', formatDate(checkinDate));
-      if (checkoutDate) params.append('checkout', formatDate(checkoutDate));
-      if (guestCount && guestCount > 1) params.append('guests', guestCount);
-      const queryString = params.toString();
-      const propertyUrl = `/listings/${property.listingId}${queryString ? '?' + queryString : ''}`;
-      
-      const popupContent = `
-        <a href="${propertyUrl}" style="text-decoration: none; color: inherit; display: block;">
-          <div style="font-family: 'Manrope', sans-serif;">
-            ${property.featuredImage ? `<img src="${property.featuredImage}" style="width: 100%; height: 150px; object-fit: cover; border-radius: 12px 12px 0 0; margin-bottom: 12px;" alt="${property.name}">` : ''}
-            <div style="padding: 0 8px 8px;">
-              <div style="font-size: 13px; color: #717171; margin-bottom: 4px;">
-                ${property.city}, ${property.state}
-              </div>
-              <h3 style="font-size: 16px; font-weight: 600; color: #0F2C3A; margin: 0 0 8px 0;">
-                ${property.name}
-              </h3>
-              <div style="font-size: 15px; font-weight: 600; color: #0F2C3A;">
-                ${formatPriceRange(property.priceMin, property.priceMax)}<span style="font-weight: 400; font-size: 13px;">/night</span>
-              </div>
-            </div>
+      <div class="custom-marker house-marker" style="
+        width: 40px;
+        height: 40px;
+        background: white;
+        border: 2px solid #0F2C3A;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        cursor: pointer;
+        transition: all 0.2s ease;
+      ">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="
+          width: 24px;
+          height: 24px;
+          color: #0F2C3A;
+          display: block;
+        ">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+      </div>
+    `,
+    iconSize: [40, 40],
+    iconAnchor: [20, 40]
+  });
+  
+  // Create popup content with search params
+  const params = new URLSearchParams();
+  if (checkinDate) params.append('checkin', formatDate(checkinDate));
+  if (checkoutDate) params.append('checkout', formatDate(checkoutDate));
+  if (guestCount && guestCount > 1) params.append('guests', guestCount);
+  const queryString = params.toString();
+  const propertyUrl = `/listings/${property.listingId}${queryString ? '?' + queryString : ''}`;
+  
+  const popupContent = `
+    <a href="${propertyUrl}" style="text-decoration: none; color: inherit; display: block;">
+      <div style="font-family: 'Manrope', sans-serif;">
+        ${property.featuredImage ? `<img src="${property.featuredImage}" style="width: 100%; height: 150px; object-fit: cover; border-radius: 12px 12px 0 0; margin-bottom: 12px;" alt="${property.name}">` : ''}
+        <div style="padding: 0 8px 8px;">
+          <div style="font-size: 13px; color: #717171; margin-bottom: 4px;">
+            ${property.city}, ${property.state}
           </div>
-        </a>
-      `;
-      
-      // Create marker
-const marker = L.marker([lat, lng], {
-  icon: markerIcon,
-  listingId: property.listingId
-})
-.bindPopup(popupContent, {
-  maxWidth: 280,
-  minWidth: 280,
-  className: 'custom-popup'
-});
-
-// Add hover effects
-marker.on('mouseover', function(e) {
-  const markerElement = e.target.getElement();
-  if (markerElement) {
-    const houseMarker = markerElement.querySelector('.house-marker');
-    const svg = markerElement.querySelector('svg');
-    if (houseMarker && svg) {
-      houseMarker.style.transform = 'scale(1.15)';
-      houseMarker.style.boxShadow = '0 4px 12px rgba(0,0,0,0.25)';
+          <h3 style="font-size: 16px; font-weight: 600; color: #0F2C3A; margin: 0 0 8px 0;">
+            ${property.name}
+          </h3>
+          <div style="font-size: 15px; font-weight: 600; color: #0F2C3A;">
+            ${formatPriceRange(property.priceMin, property.priceMax)}<span style="font-weight: 400; font-size: 13px;">/night</span>
+          </div>
+        </div>
+      </div>
+    </a>
+  `;
+  
+  // Create marker
+  const marker = L.marker([lat, lng], {
+    icon: markerIcon,
+    listingId: property.listingId
+  })
+  .bindPopup(popupContent, {
+    maxWidth: 280,
+    minWidth: 280,
+    className: 'custom-popup'
+  });
+  
+  // Add hover effects
+  marker.on('mouseover', function(e) {
+    const markerElement = e.target.getElement();
+    if (markerElement) {
+      const houseMarker = markerElement.querySelector('.house-marker');
+      if (houseMarker) {
+        houseMarker.style.transform = 'scale(1.15)';
+        houseMarker.style.boxShadow = '0 4px 12px rgba(0,0,0,0.25)';
+      }
     }
-  }
-});
-
-marker.on('mouseout', function(e) {
-  const markerElement = e.target.getElement();
-  if (markerElement) {
-    const houseMarker = markerElement.querySelector('.house-marker');
-    const svg = markerElement.querySelector('svg');
-    if (houseMarker && svg) {
-      houseMarker.style.transform = 'scale(1)';
-      houseMarker.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)';
+  });
+  
+  marker.on('mouseout', function(e) {
+    const markerElement = e.target.getElement();
+    if (markerElement) {
+      const houseMarker = markerElement.querySelector('.house-marker');
+      if (houseMarker) {
+        houseMarker.style.transform = 'scale(1)';
+        houseMarker.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)';
+      }
     }
-  }
-});
-
-marker.on('popupopen', function(e) {
-  const markerElement = e.target.getElement();
-  if (markerElement) {
-    const houseMarker = markerElement.querySelector('.house-marker');
-    const svg = markerElement.querySelector('svg');
-    if (houseMarker && svg) {
-      // Active state: dark background, white icon
-      houseMarker.style.background = '#0F2C3A';
-      houseMarker.style.borderColor = '#0F2C3A';
-      svg.style.color = 'white';
+  });
+  
+  marker.on('popupopen', function(e) {
+    const markerElement = e.target.getElement();
+    if (markerElement) {
+      const houseMarker = markerElement.querySelector('.house-marker');
+      const svg = markerElement.querySelector('svg');
+      if (houseMarker && svg) {
+        // Active state: dark background, white icon
+        houseMarker.style.background = '#0F2C3A';
+        houseMarker.style.borderColor = '#0F2C3A';
+        svg.style.color = 'white';
+      }
     }
-  }
-});
-
-marker.on('popupclose', function(e) {
-  const markerElement = e.target.getElement();
-  if (markerElement) {
-    const houseMarker = markerElement.querySelector('.house-marker');
-    const svg = markerElement.querySelector('svg');
-    if (houseMarker && svg) {
-      // Reset to default: white background, dark icon
-      houseMarker.style.background = 'white';
-      houseMarker.style.borderColor = '#0F2C3A';
-      svg.style.color = '#0F2C3A';
+  });
+  
+  marker.on('popupclose', function(e) {
+    const markerElement = e.target.getElement();
+    if (markerElement) {
+      const houseMarker = markerElement.querySelector('.house-marker');
+      const svg = markerElement.querySelector('svg');
+      if (houseMarker && svg) {
+        // Reset to default: white background, dark icon
+        houseMarker.style.background = 'white';
+        houseMarker.style.borderColor = '#0F2C3A';
+        svg.style.color = '#0F2C3A';
+      }
     }
-  }
-});
-
-mapMarkers.push(marker);
-return marker;
-    }
+  });
+  
+  mapMarkers.push(marker);
+  return marker;
+}
     
     // Update map markers based on filtered properties
     function updateMapMarkers(filteredProperties) {
