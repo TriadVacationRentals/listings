@@ -1772,17 +1772,36 @@ function updateURLParams(params) {
       // Desktop vs Mobile styling
 const isMobile = window.innerWidth <= 768;
 
-dropdown.style.cssText = `
-  position: absolute;
-  top: calc(100% + 8px);
-  ${isMobile ? 'left: 0; right: 0;' : 'right: 0; width: 360px;'}
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-  max-height: ${isMobile ? '300px' : '500px'};
-  overflow-y: auto;
-  z-index: 10000;
-  pointer-events: auto;
+if (isMobile) {
+  // Mobile: compact with scroll
+  dropdown.style.cssText = `
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 10000;
+    display: none;
+  `;
+} else {
+  // Desktop: full height, no scroll, beautiful popup
+  dropdown.style.cssText = `
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 360px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    padding: 24px;
+    z-index: 10000;
+    display: none;
+  `;
+}
 `;
       
       // Set initial price range based on actual properties
@@ -1797,74 +1816,75 @@ dropdown.style.cssText = `
       priceMax = actualMaxPrice;
       
       dropdown.innerHTML = `
-        <!-- Price Range -->
-        <div style="margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid rgba(0,0,0,0.08);">
-          <div style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">Price per night</div>
-          <div style="display: flex; justify-content: space-between; margin-bottom: 16px; font-size: 14px; font-weight: 500;">
-            <span id="price-min-display">$${priceMin}</span>
-            <span id="price-max-display">$${priceMax}</span>
-          </div>
-          <div style="position: relative; height: 40px; margin: 0 10px;">
-            <div style="position: absolute; top: 17px; left: 0; right: 0; height: 6px; background: #E5E7EB; border-radius: 3px;"></div>
-            <div id="slider-track" style="position: absolute; top: 17px; height: 6px; background: #16A8EE; border-radius: 3px; left: 0%; width: 100%;"></div>
-            <input type="range" id="price-min-slider" min="${priceMin}" max="${priceMax}" value="${priceMin}" style="position: absolute; width: 100%; top: 8px; -webkit-appearance: none; appearance: none; background: transparent; pointer-events: none;">
-            <input type="range" id="price-max-slider" min="${priceMin}" max="${priceMax}" value="${priceMax}" style="position: absolute; width: 100%; top: 8px; -webkit-appearance: none; appearance: none; background: transparent; pointer-events: none;">
-          </div>
-        </div>
-        
-        <!-- Property Type -->
-        <div style="margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid rgba(0,0,0,0.08);">
-          <div style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">Property type</div>
-          <div id="property-types" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
-        </div>
-        
-        <!-- Rooms and Beds -->
-        <div style="margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid rgba(0,0,0,0.08);">
-          <div style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">Rooms and beds</div>
-          
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-            <span style="font-size: 14px;">Bedrooms</span>
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <button id="bedrooms-minus" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1.5px solid #E0E0E0; background: white; cursor: pointer; font-size: 20px; line-height: 1; padding: 0; opacity: 0.3;">−</button>
-              <span id="bedrooms-count" style="min-width: 35px; text-align: center; font-weight: 500; font-size: 15px;">Any</span>
-              <button id="bedrooms-plus" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1.5px solid #E0E0E0; background: white; cursor: pointer; font-size: 20px; line-height: 1; padding: 0;">+</button>
-            </div>
-          </div>
-          
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-            <span style="font-size: 14px;">Beds</span>
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <button id="beds-minus" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1.5px solid #E0E0E0; background: white; cursor: pointer; font-size: 20px; line-height: 1; padding: 0; opacity: 0.3;">−</button>
-              <span id="beds-count" style="min-width: 35px; text-align: center; font-weight: 500; font-size: 15px;">Any</span>
-              <button id="beds-plus" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1.5px solid #E0E0E0; background: white; cursor: pointer; font-size: 20px; line-height: 1; padding: 0;">+</button>
-            </div>
-          </div>
-          
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-size: 14px;">Bathrooms</span>
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <button id="bathrooms-minus" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1.5px solid #E0E0E0; background: white; cursor: pointer; font-size: 20px; line-height: 1; padding: 0; opacity: 0.3;">−</button>
-              <span id="bathrooms-count" style="min-width: 35px; text-align: center; font-weight: 500; font-size: 15px;">Any</span>
-              <button id="bathrooms-plus" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1.5px solid #E0E0E0; background: white; cursor: pointer; font-size: 20px; line-height: 1; padding: 0;">+</button>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Amenities -->
-        <div style="margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid rgba(0,0,0,0.08);">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-size: 16px; font-weight: 600;">Pets Allowed</span>
-            <div id="pets-toggle" style="position: relative; width: 48px; height: 28px; background: #E0E0E0; border-radius: 14px; cursor: pointer; transition: background 0.3s;">
-              <div style="position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; background: white; border-radius: 50%; transition: transform 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
-            </div>
-          </div>
-        </div>
-        
-       <!-- Actions -->
-        <div style="display: flex; gap: 12px; align-items: center;">
-          <button id="clear-filters" style="padding: 10px 16px; border: none; border-radius: 12px; background: transparent; color: #0F2C3A; font-size: 14px; font-weight: 500; cursor: pointer; font-family: 'Manrope', sans-serif; text-decoration: underline;">Clear all</button>
-          <button id="apply-filters" style="flex: 1; padding: 14px 32px; border: none; border-radius: 12px; background: #0F2C3A; color: white; font-size: 16px; font-weight: 600; cursor: pointer; font-family: 'Manrope', sans-serif;">Apply filters</button>
-        </div>
+  <!-- Price Range -->
+  <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid rgba(0,0,0,0.08);">
+    <div style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">Price per night</div>
+    <div style="display: flex; justify-content: space-between; margin-bottom: 16px; font-size: 14px; font-weight: 500;">
+      <span id="price-min-display">$${priceMin}</span>
+      <span id="price-max-display">$${priceMax}</span>
+    </div>
+    <div style="position: relative; height: 40px; margin: 0 10px;">
+      <div style="position: absolute; top: 17px; left: 0; right: 0; height: 6px; background: #E5E7EB; border-radius: 3px;"></div>
+      <div id="slider-track" style="position: absolute; top: 17px; height: 6px; background: #16A8EE; border-radius: 3px; left: 0%; width: 100%;"></div>
+      <input type="range" id="price-min-slider" min="${priceMin}" max="${priceMax}" value="${priceMin}" style="position: absolute; width: 100%; top: 8px; -webkit-appearance: none; appearance: none; background: transparent; pointer-events: none;">
+      <input type="range" id="price-max-slider" min="${priceMin}" max="${priceMax}" value="${priceMax}" style="position: absolute; width: 100%; top: 8px; -webkit-appearance: none; appearance: none; background: transparent; pointer-events: none;">
+    </div>
+  </div>
+  
+  <!-- Property Type -->
+  <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid rgba(0,0,0,0.08);">
+    <div style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">Property type</div>
+    <div id="property-types" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
+  </div>
+  
+  <!-- Rooms and Beds -->
+  <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid rgba(0,0,0,0.08);">
+    <div style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">Rooms and beds</div>
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+      <span style="font-size: 14px;">Bedrooms</span>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <button id="bedrooms-minus" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1.5px solid #E0E0E0; background: white; cursor: pointer; font-size: 20px; line-height: 1; padding: 0; opacity: 0.3;">−</button>
+        <span id="bedrooms-count" style="min-width: 35px; text-align: center; font-weight: 500; font-size: 15px;">Any</span>
+        <button id="bedrooms-plus" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1.5px solid #E0E0E0; background: white; cursor: pointer; font-size: 20px; line-height: 1; padding: 0;">+</button>
+      </div>
+    </div>
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+      <span style="font-size: 14px;">Beds</span>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <button id="beds-minus" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1.5px solid #E0E0E0; background: white; cursor: pointer; font-size: 20px; line-height: 1; padding: 0; opacity: 0.3;">−</button>
+        <span id="beds-count" style="min-width: 35px; text-align: center; font-weight: 500; font-size: 15px;">Any</span>
+        <button id="beds-plus" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1.5px solid #E0E0E0; background: white; cursor: pointer; font-size: 20px; line-height: 1; padding: 0;">+</button>
+      </div>
+    </div>
+    
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <span style="font-size: 14px;">Bathrooms</span>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <button id="bathrooms-minus" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1.5px solid #E0E0E0; background: white; cursor: pointer; font-size: 20px; line-height: 1; padding: 0; opacity: 0.3;">−</button>
+        <span id="bathrooms-count" style="min-width: 35px; text-align: center; font-weight: 500; font-size: 15px;">Any</span>
+        <button id="bathrooms-plus" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1.5px solid #E0E0E0; background: white; cursor: pointer; font-size: 20px; line-height: 1; padding: 0;">+</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Amenities -->
+  <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid rgba(0,0,0,0.08);">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <span style="font-size: 16px; font-weight: 600;">Pets Allowed</span>
+      <div id="pets-toggle" style="position: relative; width: 48px; height: 28px; background: #E0E0E0; border-radius: 14px; cursor: pointer; transition: background 0.3s;">
+        <div style="position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; background: white; border-radius: 50%; transition: transform 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
+      </div>
+    </div>
+  </div>
+  
+ <!-- Actions -->
+  <div style="display: flex; gap: 12px; align-items: center;">
+    <button id="clear-filters" style="padding: 10px 16px; border: none; border-radius: 12px; background: transparent; color: #0F2C3A; font-size: 14px; font-weight: 500; cursor: pointer; font-family: 'Manrope', sans-serif; text-decoration: underline;">Clear all</button>
+    <button id="apply-filters" style="flex: 1; padding: 14px 32px; border: none; border-radius: 12px; background: #0F2C3A; color: white; font-size: 16px; font-weight: 600; cursor: pointer; font-family: 'Manrope', sans-serif;">Apply filters</button>
+  </div>
+
       `;
       
       // Find the filter button's parent container and append dropdown there
@@ -2952,10 +2972,17 @@ window.clearMobileDates = function() {
 }
     
     function moveFiltersToOverlay() {
-      const container = document.getElementById('mobile-filters-container');
-      let filterDropdown = document.getElementById('filter-dropdown');
-      
-      console.log('📱 moveFiltersToOverlay called');
+  // ✅ CRITICAL: Only run on mobile
+  if (window.innerWidth > 768) {
+    console.log('🖥️ Desktop detected - skipping mobile filter setup');
+    return;
+  }
+  
+  const container = document.getElementById('mobile-filters-container');
+  let filterDropdown = document.getElementById('filter-dropdown');
+  
+  console.log('📱 moveFiltersToOverlay called');
+  // ... rest of function stays the same
       console.log('📱 Container:', container);
       console.log('📱 Filter dropdown:', filterDropdown);
       
