@@ -829,12 +829,14 @@ function handleCardScroll() {
       
       // Show/hide X button based on input
       locationInput.addEventListener('input', function() {
-        const query = this.value.trim();
-        
-        // Show/hide clear button
-        if (locationClearBtn) {
-          locationClearBtn.style.display = query.length > 0 ? 'block' : 'none';
-        }
+  const query = this.value.trim();
+  
+  // Show/hide clear button
+  if (locationClearBtn) {
+    const shouldShow = query.length > 0;
+    locationClearBtn.style.display = shouldShow ? 'block' : 'none';
+    console.log('🔍 Location input changed:', query.length, 'chars - Clear button:', shouldShow ? 'SHOW' : 'HIDE');
+  }
         
         clearTimeout(debounceTimer);
         
@@ -1731,17 +1733,18 @@ function updateURLParams(params) {
       dropdown.id = 'filter-dropdown';
       dropdown.className = 'filter-dropdown';
       dropdown.style.cssText = `
-        position: absolute;
-        top: calc(100% + 12px);
-        right: 0;
-        background: white;
-        border-radius: 24px;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-        padding: 24px;
-        width: 380px;
-        display: none;
-        z-index: 1001;
-      `;
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 10000;
+  pointer-events: auto;
+`;
       
       // Set initial price range based on actual properties
       const actualMinPrice = allProperties.length > 0 
