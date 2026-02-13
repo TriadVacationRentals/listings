@@ -719,8 +719,8 @@ function handleCardScroll() {
         transition: all 0.2s ease;
       ">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="
-          width: 24px;
-          height: 24px;
+          width: 32px;
+          height: 32px;
           color: #0F2C3A;
           display: block;
         ">
