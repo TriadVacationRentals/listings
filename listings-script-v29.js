@@ -808,6 +808,13 @@ function handleCardScroll() {
     clearSearchBtn.addEventListener('click', clearSearch);
   }
   
+  // ✅ NEW: Show location clear button if location input has value
+  const locationInput = document.getElementById('location-input');
+  const locationClearBtn = document.getElementById('location-clear-btn');
+  if (locationInput && locationClearBtn && locationInput.value.trim().length > 0) {
+    locationClearBtn.style.display = 'block';
+  }
+  
   console.log('✅ Search bar ready');
 }
     
@@ -818,9 +825,17 @@ function handleCardScroll() {
     function setupLocationSearch() {
       const locationInput = document.getElementById('location-input');
       const locationField = document.getElementById('location-field');
+      const locationClearBtn = document.getElementById('location-clear-btn');
       
+      // Show/hide X button based on input
       locationInput.addEventListener('input', function() {
         const query = this.value.trim();
+        
+        // Show/hide clear button
+        if (locationClearBtn) {
+          locationClearBtn.style.display = query.length > 0 ? 'block' : 'none';
+        }
+        
         clearTimeout(debounceTimer);
         
         if (query.length < 3) {
@@ -832,6 +847,18 @@ function handleCardScroll() {
           fetchLocationSuggestions(query);
         }, 300);
       });
+      
+      // Clear button click
+      if (locationClearBtn) {
+        locationClearBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          locationInput.value = '';
+          selectedLocation = null;
+          locationClearBtn.style.display = 'none';
+          hideLocationDropdown();
+          locationInput.focus();
+        });
+      }
       
       locationField.addEventListener('click', function(e) {
         e.stopPropagation();
@@ -2057,6 +2084,13 @@ function updateURLParams(params) {
         bathroomsFilter = 0;
         selectedPropertyTypes = [];
         petsAllowedFilter = false;
+        
+        // ✅ NEW: Also clear location
+        selectedLocation = null;
+        const locationInput = document.getElementById('location-input');
+        const locationClearBtn = document.getElementById('location-clear-btn');
+        if (locationInput) locationInput.value = '';
+        if (locationClearBtn) locationClearBtn.style.display = 'none';
         
         // Reset UI
         document.getElementById('price-min-slider').value = priceMin;
