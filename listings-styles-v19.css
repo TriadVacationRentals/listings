@@ -932,6 +932,12 @@
     font-size: 16px !important;
   }
   
+  /* Remove bottom border from last filter section in mobile (before action buttons) */
+  #mobile-filter-dropdown > div:nth-last-child(2) {
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+  }
+  
   /* NEW: Mobile search footer - sticky buttons */
   .mobile-search-footer {
     padding: 16px 20px;
