@@ -500,6 +500,12 @@
     max-height: 70vh !important;
     overflow-y: auto !important;
   }
+  
+  /* Remove bottom border from last filter section (before action buttons) */
+  #filter-dropdown > div:nth-last-child(2) {
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+  }
 }
 
 /* ============================================ */
