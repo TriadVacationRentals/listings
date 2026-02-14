@@ -501,8 +501,8 @@
     overflow-y: auto !important;
   }
   
-  /* Remove bottom border from last filter section (before action buttons) */
-  #filter-dropdown > div:nth-last-child(2) {
+  /* Remove bottom border from Pets Allowed section (last section before action buttons) */
+  #filter-dropdown > div:last-of-type:not([style*="display: flex"]) {
     border-bottom: none !important;
     padding-bottom: 0 !important;
   }
@@ -932,8 +932,8 @@
     font-size: 16px !important;
   }
   
-  /* Remove bottom border from last filter section in mobile (before action buttons) */
-  #mobile-filter-dropdown > div:nth-last-child(2) {
+  /* Remove bottom border from Pets Allowed section in mobile (last section before action buttons) */
+  #mobile-filter-dropdown > div:last-of-type:not([style*="display: flex"]) {
     border-bottom: none !important;
     padding-bottom: 0 !important;
   }
